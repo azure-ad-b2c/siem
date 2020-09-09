@@ -111,7 +111,7 @@ SigninLogs
 |summarize Total = count() by Browser
 ```
 
-![Total Sign-In by Location](images/sign-in-per-region.png)
+![Total Sign-In by Location](images/total-sign-in-by-browsers.png)
 
 ## Dasbhoard
 
