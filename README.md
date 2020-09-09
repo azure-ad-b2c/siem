@@ -34,6 +34,9 @@ In this repo, you will find samples for reporting, alerts and dashboards using A
   
   ![FAQ-1](images/faq-1.png)
 
+- Why my reports are not able to showing data beyond past 30 days?
+
+  By default Logs Analytics workspace only retain data for 30 days. You can change the retention period by using the instructions provided [here](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/manage-cost-storage#change-the-data-retention-period)
   
 
 
