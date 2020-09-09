@@ -24,6 +24,19 @@ In this repo, you will find samples for reporting, alerts and dashboards using A
 
 ## Reports
 
+### Failed Sign-Ins
+
+This reports shows failed sign-ins by the users over the past x days.The deafult days is set to 90 days i-e```90d``` which you can change to match your needs.
+
+```
+SigninLogs
+| where TimeGenerated >= ago(90d)
+| where ResultType !~ "0" 
+| summarize  by TimeGenerated, UserPrincipalName, ResultDescription, tostring( DeviceDetail), IPAddress
+| sort by TimeGenerated desc   
+```
+ 
+![FAQ-1](images/failed-sign-ins.png)
 
 
 ## FAQ
