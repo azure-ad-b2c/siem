@@ -73,7 +73,7 @@ AuditLogs
 
 ![Policy Usage](images/policy-usage.png)
 
-### Total Sign-In by Location
+### Total Sign-Ins by Region
 
 This reports shows all total number of sign-ins for the past x days. This include sign-ins for Azure Portal and Azure AD B2C Policy.
 
@@ -96,7 +96,22 @@ SigninLogs
 |summarize signInCount = count() by Location
 ```
 
+### Total Sign-Ins Per Browser
 
+This reports shows all total number of sign-ins for the past x days. This include sign-ins for Azure Portal and Azure AD B2C Policy.
+
+```
+SigninLogs
+|where TimeGenerated >= ago(90d)
+|extend OS= DeviceDetail.operatingSystem
+|extend Browser =extract("([a-zA-Z]+)",1,tostring(DeviceDetail.browser))
+|where OS!=""
+|where Browser !=""
+|where AppDisplayName  == "ProxyIdentityExperienceFramework"
+|summarize Total = count() by Browser
+```
+
+![Total Sign-In by Location](images/sign-in-per-region.png)
 
 ## Dasbhoard
 
