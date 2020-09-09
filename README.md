@@ -31,6 +31,7 @@ In this repo, you will find samples for reporting, alerts and dashboards using A
 - How do I know Azure AD B2C logs are available in Logs Analytics workspace?
 
   Azure AD B2C AuditLogs and SigninLogs shows up in the LogManagement console as shown below.
+  
   ![FAQ-1](images/faq-1.png)
 
   
