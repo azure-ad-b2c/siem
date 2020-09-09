@@ -26,7 +26,7 @@ In this repo, you will find samples for reporting, alerts and dashboards using A
 
 ### Failed Sign-Ins
 
-This reports shows failed sign-ins by the users over the past x days. The deafult days is set to 90 days i-e ```90d```, which you can change to match your needs.
+This report shows failed sign-ins by the users over the past x days. The default duration is set to 90 days i-e ```90d```.
 
 ```
 SigninLogs
@@ -40,7 +40,7 @@ SigninLogs
 
 ### Last Sign-In 
 
-This reports shows last sucessful sign-in by the users over the past x days. 
+This report shows last sucessful sign-in by the users over the past x days. The default duration is set to 90 days i-e ```90d```.
 
 ```
 AuditLogs 
@@ -56,6 +56,24 @@ AuditLogs
 |sort by TimeGenerated desc
 ```
 ![Last Sign-In](images/last-sign-in.png)
+
+### Policy Usage By Operation
+
+This report shows policy usage by operation over the past x days. The default duration is set to 90 days i-e ```90d```. Notice that the query is focused only on the operation where some token/code is issued by policy.
+
+```
+AuditLogs 
+| where TimeGenerated  > ago(90d)
+| where OperationName contains "issue"
+| extend  UserId=extractjson("$.[0].id",tostring(TargetResources))
+| extend Policy=extractjson("$.[1].value",tostring(AdditionalDetails))
+| summarize SignInCount = count() by Policy, OperationName
+| order by SignInCount desc  nulls last   
+```
+
+
+
+
 ## FAQ
 
 - How do I know Azure AD B2C logs are available in Logs Analytics workspace?
