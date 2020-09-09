@@ -26,7 +26,7 @@ In this repo, you will find samples for reporting, alerts and dashboards using A
 
 ### Failed Sign-Ins
 
-This reports shows failed sign-ins by the users over the past x days.The deafult days is set to 90 days i-e```90d``` which you can change to match your needs.
+This reports shows failed sign-ins by the users over the past x days. The deafult days is set to 90 days i-e ```90d```, which you can change to match your needs.
 
 ```
 SigninLogs
@@ -36,9 +36,26 @@ SigninLogs
 | sort by TimeGenerated desc   
 ```
  
-![FAQ-1](images/failed-sign-ins.png)
+![Failed Sign-Ins](images/failed-sign-ins.png)
 
+### Last Sign-In 
 
+This reports shows last sucessful sign-in by the users over the past x days. 
+
+```
+AuditLogs 
+| where TimeGenerated >= ago(90d)
+| where OperationName == "Validate local account credentials" 
+| where Result == "success" 
+| extend details=parse_json(AdditionalDetails)  
+| extend user = tostring(details[4].value)  
+| extend policyId = tostring(details[1].value)  
+| extend appId = tostring(details[2].value)  
+| extend ip = tostring(details[5].value)  
+| project TimeGenerated, Result, user, policyId, ip 
+|sort by TimeGenerated desc
+```
+![Last Sign-In](images/last-sign-in.png)
 ## FAQ
 
 - How do I know Azure AD B2C logs are available in Logs Analytics workspace?
