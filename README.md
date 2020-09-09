@@ -86,7 +86,7 @@ SigninLogs
 
 ![Total Sign-In by Location](images/sign-in-per-region.png)
 
-If you want to limit the report to Sign-Ins occured through Azure AD B2C policies, update the query as follows:
+If you like to limit the report to only include sign-ins that are occured through the Azure AD B2C policies, update the query as follows:
 
 ```
 SigninLogs
