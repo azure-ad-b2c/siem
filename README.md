@@ -71,7 +71,7 @@ AuditLogs
 | order by SignInCount desc  nulls last   
 ```
 
-
+![Policy Usage](images/policy-usage.png)
 
 
 ## FAQ
