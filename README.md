@@ -73,6 +73,31 @@ AuditLogs
 
 ![Policy Usage](images/policy-usage.png)
 
+### Total Sign-In by Location
+
+This reports shows all total number of sign-ins for the past x days. This include sign-ins for Azure Portal and Azure AD B2C Policy.
+
+```
+SigninLogs
+| where TimeGenerated  > ago(90d)
+| where AppDisplayName != ""
+|summarize signInCount = count() by Location
+```
+
+![Total Sign-In by Location](images/sign-in-per-region.png)
+
+If you want to limit the report to Sign-Ins occured through Azure AD B2C policies, update the query as follows:
+
+```
+SigninLogs
+| where TimeGenerated  > ago(90d)
+| where AppDisplayName  == "ProxyIdentityExperienceFramework"
+| project OperationName, Location, UserPrincipalName, AppDisplayName
+|summarize signInCount = count() by Location
+```
+
+
+
 ## Dasbhoard
 
 ## Alerts
