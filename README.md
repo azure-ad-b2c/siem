@@ -115,7 +115,15 @@ SigninLogs
 
 ## Dasbhoard
 
+TODO: Add instructions about how to add reports to dashboard and render as charts.
+
+![Dashboard1](images/dashboard-1.png)
+![Dashboard2](images/dashboard-2.png)
+
 ## Alerts
+
+TODO: Add instructions about how to add an email alerts. For example -- send email if IP Address send more than x amount of requests in y minutes.
+![Alert1](images/alert1.png)
 
 
 
