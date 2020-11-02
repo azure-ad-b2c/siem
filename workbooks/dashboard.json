@@ -589,8 +589,5 @@
       "name": "query - 10"
     }
   ],
-  "fallbackResourceIds": [
-    "/subscriptions/b0e2eadb-68a3-451b-b8e3-4681b9a8368f/resourceGroups/azure-ad-b2c-monitor/providers/Microsoft.OperationalInsights/workspaces/azb2c"
-  ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
