@@ -1,0 +1,128 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "## MFA Operations Summary"
+      },
+      "name": "text - 4"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated > ago(180d)\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| project TimeGenerated, CorrelationId,Method=strcat(ad1,\",\",ad2), Result, ResultDescription, OperationName, addtionalDetails\n| summarize count() by Result\n//| order by TimeGenerated",
+        "size": 4,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "tiles",
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "count_",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "blueDarkDark"
+            }
+          },
+          "subtitleContent": {
+            "columnMatch": "Result",
+            "formatter": 18,
+            "formatOptions": {
+              "thresholdsOptions": "icons",
+              "thresholdsGrid": [
+                {
+                  "operator": "!=",
+                  "thresholdValue": "success",
+                  "representation": "error",
+                  "text": "{0}{1}"
+                },
+                {
+                  "operator": "Default",
+                  "thresholdValue": null,
+                  "representation": "success",
+                  "text": "{0}{1}"
+                }
+              ]
+            }
+          },
+          "showBorder": false
+        },
+        "graphSettings": {
+          "type": 0
+        }
+      },
+      "name": "query - 2"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## MFA Operations Per Azure AD B2C Policy"
+      },
+      "name": "text - 8"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated > ago(180d)\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Method=strcat(ad1,\",\",ad2), Result, ResultDescription, OperationName, addtionalDetails\n| summarize count() by Policy \n//| order by TimeGenerated",
+        "size": 0,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "barchart"
+      },
+      "name": "query - 7"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Successful MFA Opertaions"
+      },
+      "name": "text - 5"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated > ago(180d)\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result == \"success\"\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Method=strcat(ad1,\",\",ad2), Result, ResultDescription, OperationName, addtionalDetails\n| order by TimeGenerated",
+        "size": 0,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "sortBy": [
+            {
+              "itemKey": "Result",
+              "sortOrder": 2
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "Result",
+            "sortOrder": 2
+          }
+        ]
+      },
+      "name": "query - 2"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## UnSuccessful MFA Opertaions\n"
+      },
+      "name": "text - 6"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n| where TimeGenerated > ago(180d)\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Method=strcat(ad1,\",\",ad2), Result, ResultDescription, OperationName, addtionalDetails\n| order by TimeGenerated",
+        "size": 0,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 3"
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
