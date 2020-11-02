@@ -124,8 +124,23 @@ SigninLogs
 
 ## Alerts
 
-TODO: Add instructions about how to add an email alerts. For example -- send email if IP Address send more than x amount of requests in y minutes.
-![Alert1](images/alert1.png)
+- Alert against abrupt drop in Total Requests: If there is an abrupt drop (e.g. drop by 25% percentage) in the total requests, compared to previous period then raise an alert.  
+```
+let start = ago(2d);
+let end = now();
+let threshold = -25; //25% decrease in total requests.
+AuditLogs
+| serialize TimeGenerated, CorrelationId, Result
+| make-series TotalRequests=dcount(CorrelationId) on TimeGenerated in range(start, end, 1d) //by Result
+| mvexpand TimeGenerated, TotalRequests
+| where TotalRequests > 0
+| serialize TotalRequests, TimeGenerated, TimeGeneratedFormatted=format_datetime(todatetime(TimeGenerated), 'yyyy-M-dd')
+| project   TimeGeneratedFormatted, TotalRequests, PercentageChange= ((toreal(TotalRequests) - toreal(prev(TotalRequests,1)))/toreal(prev(TotalRequests,1)))*100
+| order by TimeGeneratedFormatted
+| where PercentageChange <= threshold   //Trigger's alert rule if matched.
+```
+
+![Alert1](images/alert-1.png)
 
 
 
