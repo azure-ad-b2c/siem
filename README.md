@@ -24,7 +24,7 @@ In this repo, you will find samples for reporting, alerts and dashboards using A
 
 ## Workbooks
 
-### Dasbhoard
+### Dashboard
 
 ![Dashboard1](images/wrkb-dashboard-1.png)
 ![Dashboard1](images/wrkb-dashboard-2.png)
