@@ -7,19 +7,6 @@
         "version": "KqlParameterItem/1.0",
         "parameters": [
           {
-            "id": "81018bf4-b214-4d2f-bfac-9efb30ea7afb",
-            "version": "KqlParameterItem/1.0",
-            "name": "Subscription",
-            "type": 6,
-            "isRequired": true,
-            "value": "/subscriptions/[YOUR-SUBSCRIPTION-ID]",
-            "typeSettings": {
-              "additionalResourceOptions": [],
-              "includeAll": true,
-              "showDefault": false
-            }
-          },
-          {
             "id": "12e24ac4-d5f3-42ec-9c32-118fd5438150",
             "version": "KqlParameterItem/1.0",
             "name": "TimeRange",
@@ -601,6 +588,9 @@
       },
       "name": "query - 10"
     }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/b0e2eadb-68a3-451b-b8e3-4681b9a8368f/resourceGroups/azure-ad-b2c-monitor/providers/Microsoft.OperationalInsights/workspaces/azb2c"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
