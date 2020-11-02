@@ -115,10 +115,12 @@ SigninLogs
 
 ## Dasbhoard
 
-TODO: Add instructions about how to add reports to dashboard and render as charts.
+ 
 
-![Dashboard1](images/dashboard-1.png)
-![Dashboard2](images/dashboard-2.png)
+![Dashboard1](images/wrkb-dashboard-1.png)
+![Dashboard1](images/wrkb-dashboard-2.png)
+![Dashboard1](images/wrkb-dashboard-3.png)
+![Dashboard1](images/wrkb-dashboard-4.png)
 
 ## Alerts
 
