@@ -29,7 +29,7 @@ In this repo, you will find samples for Azure AD B2C reporting and alerts create
 
 All the reports in this repo are based on [Azure Monitor Workbooks](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/workbooks-overview) which provide a flexible canvas for data analysis and the creation of rich visual reports within the Azure portal. 
 
-The [Workbooks](workbooks) folder within this repo contains four workbooks in the standard JSON Gallery Template format. You can use following instructions to create a new workbook. Please note that you need to repeat these steps for all workbooks. 
+The [Workbooks](workbooks) folder within this repo contains four workbooks in the standard JSON Gallery Template format. You can use the following instructions to import the JSON to create a new workbook. Please note that you need to repeat these steps for all workbooks. 
 
 - [Dashboard](workbooks/dashboard.json) 
 - [MFA](workbooks/mfa-operations.json) 
@@ -101,14 +101,14 @@ The workbook will display reports in the form of a dashboard.
     - Location (Based on user request to B2C policy/user flow which results in Condtional Access evaluation)
     - Conditional Access Evaluations Per B2C Policy
     - Conditional Access Evaluations (all relevant operations)
-    - Details of particular Conditional Access Evaluation (click on any row item within Condtional Access Evaulation to get the operation details) 
+    - Details (of a particular Conditional Access Evaluation. Click on a row item within the Condtional Access Evaulation to view an operation details) 
 
     ![CA1](images/wrkb-ca-1.png)
     ![CA2](images/wrkb-ca-2.png)
  
 ### Search by CorrelationId
 
-The [Search by CorrelatiionId](workbook/search-by-correlationid.json) workbook allows you to search Sign-In and Audit Logs against a particular correlation id. This is helpful when you are trying to troubleshoot a particular issue and want to filter based on correlation id across both logs.
+The [Search by CorrelationId](workbook/search-by-correlationid.json) workbook allows you to search Sign-In and Audit Logs against a particular correlation id. This is helpful when you are trying to troubleshoot a particular issue and want to filter based on a correlation id across both logs.
 
   ![Search by CorrelatiionId](images/wrkb-search-by-correlationid.png)
     
