@@ -130,11 +130,10 @@ Use the following instructions to create a new **Azure Alert which will send an 
     | serialize TimeGenerated, CorrelationId, Result
     | make-series TotalRequests=dcount(CorrelationId) on TimeGenerated in range(start, end, 1h)
     | mvexpand TimeGenerated, TotalRequests
-    | where TotalRequests > 0
     | serialize TotalRequests, TimeGenerated, TimeGeneratedFormatted=format_datetime(todatetime(TimeGenerated), 'yyyy-M-dd [hh:mm:ss tt]')
     | project   TimeGeneratedFormatted, TotalRequests, PercentageChange= ((toreal(TotalRequests) - toreal(prev(TotalRequests,1)))/toreal(prev(TotalRequests,1)))*100
     | order by TimeGeneratedFormatted
-    | where PercentageChange <= threshold   //Trigger's alert rule if matched.
+    | where PercentageChange <= threshold or TotalRequests == 0 
     ```
 
  - Select **Run**, to test the query. You should see the results if there is a drop of 25% or more in the total requests within the past 24 hours.
