@@ -1,6 +1,6 @@
-# Reports | Alerts | Dashboards
+# Azure AD B2C Reports & Alerts 
 
-In this repo, you will find samples for Azure AD B2C reporting, alerts, and dashboards using Azure Monitor.
+In this repo, you will find samples for Azure AD B2C reporting and alerts created using Azure Monitor.
 
 ## Getting Started
 
