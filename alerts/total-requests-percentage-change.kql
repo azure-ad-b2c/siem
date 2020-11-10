@@ -8,4 +8,4 @@ AuditLogs
 | serialize TotalRequests, TimeGenerated, TimeGeneratedFormatted=format_datetime(todatetime(TimeGenerated), 'yyyy-M-dd [hh:mm:ss tt]')
 | project   TimeGeneratedFormatted, TotalRequests, PercentageChange= ((toreal(TotalRequests) - toreal(prev(TotalRequests,1)))/toreal(prev(TotalRequests,1)))*100
 | order by TimeGeneratedFormatted
-| where PercentageChange <= threshold or TotalRequests == 0 
+| where PercentageChange <= threshold

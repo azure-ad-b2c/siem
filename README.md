@@ -133,7 +133,7 @@ Use the following instructions to create a new **Azure Alert which will send an 
     | serialize TotalRequests, TimeGenerated, TimeGeneratedFormatted=format_datetime(todatetime(TimeGenerated), 'yyyy-M-dd [hh:mm:ss tt]')
     | project   TimeGeneratedFormatted, TotalRequests, PercentageChange= ((toreal(TotalRequests) - toreal(prev(TotalRequests,1)))/toreal(prev(TotalRequests,1)))*100
     | order by TimeGeneratedFormatted
-    | where PercentageChange <= threshold or TotalRequests == 0 
+    | where PercentageChange <= threshold
     ```
 
  - Select **Run**, to test the query. You should see the results if there is a drop of 25% or more in the total requests within the past 24 hours.
