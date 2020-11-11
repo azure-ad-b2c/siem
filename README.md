@@ -1,6 +1,6 @@
 # Azure AD B2C Reports & Alerts 
 
-In this repo, you will find samples for Azure AD B2C reporting and alerts created using Azure Monitor.
+In this repo, you will find samples to create your own dashboard, reports & alerts based on the Azure AD B2C logs. 
 
 ## Getting Started
 
@@ -18,7 +18,7 @@ In this repo, you will find samples for Azure AD B2C reporting and alerts create
 
 ## Prerequisites
 
-- You will require to create an Azure AD B2C directory, see the guidance [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant).
+- You will be required to create an Azure AD B2C directory, see the guidance [here](https://docs.microsoft.com/en-us/azure/active-directory-b2c/tutorial-create-tenant).
 
 - To use the sample artifacts in this repo, follow the instructions described in the [Monitor Azure AD B2C with Azure Monitor
 ](https://docs.microsoft.com/en-us/azure/active-directory-b2c/azure-monitor
@@ -28,6 +28,8 @@ In this repo, you will find samples for Azure AD B2C reporting and alerts create
 ## Workbooks
 
 All the reports in this repo are based on [Azure Monitor Workbooks](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/workbooks-overview) which provide a flexible canvas for data analysis and the creation of rich visual reports within the Azure portal. 
+
+### How to Configure Workbooks
 
 The [Workbooks](workbooks) folder within this repo contains four workbooks in the standard JSON Gallery Template format. You can use the following instructions to import the JSON to create a new workbook. Please note that you need to repeat these steps for all workbooks. 
 
@@ -94,7 +96,6 @@ The workbook will display reports in the form of a dashboard.
 
 [MFA](workbook/ca-report) workbook provides details related to Condtional Access within Azure AD B2C tenant.
 
-   
 > **NOTE**: This report requires Azure AD B2C Conditional Access to be enabled on Azure AD B2C. For more information, please read [Add Conditional Access to user flows in Azure Active Directory B2C](https://docs.microsoft.com/en-us/azure/active-directory-b2c/conditional-access-user-flow) and [Define a Conditional Access technical profile in an Azure Active Directory B2C custom policy](https://docs.microsoft.com/en-us/azure/active-directory-b2c/conditional-access-technical-profile)
      
 - Conditional Access Report
@@ -116,6 +117,8 @@ The [Search by CorrelationId](workbook/search-by-correlationid.json) workbook al
 ## Alerts
 
 Alerts are created by alert rules in Azure Monitor and can automatically run saved queries or custom log searches at regular intervals. You can create alerts based on specific performance metrics or when certain events are created, absence of an event, or a number of events are created within a particular time window. For example, alerts can be used to notify you when average number of sign-in exceeds a certain threshold. For more information, see Create alerts.
+
+### How to Configure Alerts
 
 Use the following instructions to create a new **Azure Alert which will send an email notification whenever there is a 25% drop in the Total Requests compare to previous period. Alert will run every 5 minutes and look for the drop within last 24 hours windows**. The alerts are created using Kusto query language.
 
