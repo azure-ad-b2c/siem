@@ -1,12 +1,11 @@
-let start = ago(7d);
+let start = ago(24h);
 let end = now();
-let threshold = -25; //Example: 25% decrease in total requests.
+let threshold = -25; //25% decrease in total requests.
 AuditLogs
 | serialize TimeGenerated, CorrelationId, Result
-| make-series TotalRequests=dcount(CorrelationId) on TimeGenerated in range(start, end, 1d) 
+| make-series TotalRequests=dcount(CorrelationId) on TimeGenerated in range(start, end, 1h)
 | mvexpand TimeGenerated, TotalRequests
-| where TotalRequests > 0
-| serialize TotalRequests, TimeGenerated, TimeGeneratedFormatted=format_datetime(todatetime(TimeGenerated), 'yyyy-M-dd')
+| serialize TotalRequests, TimeGenerated, TimeGeneratedFormatted=format_datetime(todatetime(TimeGenerated), 'yyyy-M-dd [hh:mm:ss tt]')
 | project   TimeGeneratedFormatted, TotalRequests, PercentageChange= ((toreal(TotalRequests) - toreal(prev(TotalRequests,1)))/toreal(prev(TotalRequests,1)))*100
 | order by TimeGeneratedFormatted
-| where PercentageChange <= threshold   //Trigger's alert rule if matched.
+| where PercentageChange <= threshold
