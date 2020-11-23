@@ -1,0 +1,1 @@
+- Sample Azure AD B2C Policy for [List of Abandon Journeys Workbook](../../../siem/blob/master/README.md#list-of-abandon-journeys)
