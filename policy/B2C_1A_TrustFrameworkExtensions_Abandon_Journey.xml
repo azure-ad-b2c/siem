@@ -1,0 +1,256 @@
+<TrustFrameworkPolicy xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns="http://schemas.microsoft.com/online/cpim/schemas/2013/06" PolicySchemaVersion="0.3.0.0" TenantId="<<yourtenant>>.onmicrosoft.com" PolicyId="B2C_1A_TrustFrameworkExtensions_Abandon_Journey" PublicPolicyUri="http://<<yourtenant>>.onmicrosoft.com/B2C_1A_TrustFrameworkExtensions_Abandon_Journey" TenantObjectId="<<REPLACE WITH YOYR TENANT-ID>>">
+  <BasePolicy>
+    <TenantId>ultimatetest1.onmicrosoft.com</TenantId>
+    <PolicyId>B2C_1A_TrustFrameworkBase_Abandon_Journey</PolicyId>
+  </BasePolicy>
+  <BuildingBlocks>
+    <ClaimsSchema>
+      <!-- AppInsights Claims-->
+      <ClaimType Id="EventType">
+        <DisplayName>Event type</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="EventTimestamp">
+        <DisplayName>Event timestamp</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="PolicyId">
+        <DisplayName>Policy Id</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="Culture">
+        <DisplayName>Culture ID</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="LanguageName">
+        <DisplayName>LanguageName</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="LCID">
+        <DisplayName>LCID</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="RegionName">
+        <DisplayName>RegionName</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="IPAddress">
+        <DisplayName>IPAddress</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="CorrelationId">
+        <DisplayName>Correlation Id</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <ClaimType Id="federatedUser">
+        <DisplayName>Federated user</DisplayName>
+        <DataType>boolean</DataType>
+      </ClaimType>
+      <ClaimType Id="parsedDomain">
+        <DisplayName>Domain name</DisplayName>
+        <DataType>string</DataType>
+        <UserHelpText>The domain portion of the email address.</UserHelpText>
+      </ClaimType>
+      <ClaimType Id="userInLocalDirectory">
+        <DisplayName>userInLocalDirectory</DisplayName>
+        <DataType>boolean</DataType>
+      </ClaimType>
+      <ClaimType Id="ContentDefinitionReferenceId">
+        <DisplayName>ContentDefinitionReferenceId</DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+      <!-- Added to track if the request comes from sythentic tool.  -->
+      <ClaimType Id="Sythentic">
+        <DisplayName>Sythentic </DisplayName>
+        <DataType>string</DataType>
+      </ClaimType>
+    </ClaimsSchema>
+  </BuildingBlocks>
+  <ClaimsProviders>
+    <!-- AppInsights Technical Profiles -->
+    <ClaimsProvider>
+      <DisplayName>Application Insights</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="AppInsights-Common">
+          <DisplayName>Application Insights</DisplayName>
+          <Protocol Name="Proprietary" Handler="Web.TPEngine.Providers.Insights.AzureApplicationInsightsProvider, Web.TPEngine, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+          <Metadata>
+            <!-- The ApplicationInsights instrumentation key which will be used for logging the events -->
+            <Item Key="InstrumentationKey">85b39810-b196-49ee-911b-2388ff89cf02</Item>
+            <Item Key="DeveloperMode">false</Item>
+            <Item Key="DisableTelemetry ">false</Item>
+          </Metadata>
+          <InputClaims>
+            <!-- Properties of an event are added through the syntax {property:NAME}, where NAME is property being added to the event. DefaultValue can be either a static value or a value that's resolved by one of the supported DefaultClaimResolvers. -->
+            <InputClaim ClaimTypeReferenceId="EventTimestamp" PartnerClaimType="{property:EventTimestamp}" DefaultValue="{Context:DateTimeInUtc}" />
+            <InputClaim ClaimTypeReferenceId="PolicyId" PartnerClaimType="{property:Policy}" DefaultValue="{Policy:PolicyId}" />
+            <InputClaim ClaimTypeReferenceId="CorrelationId" PartnerClaimType="{property:CorrelationId}" DefaultValue="{Context:CorrelationId}" />
+            <InputClaim ClaimTypeReferenceId="IPAddress" PartnerClaimType="{Context:IPAddress}" DefaultValue="{Context:IPAddress}" />
+            <InputClaim ClaimTypeReferenceId="Culture" PartnerClaimType="{property:Culture}" DefaultValue="{Culture:RFC5646}" />
+            <InputClaim ClaimTypeReferenceId="LanguageName" PartnerClaimType="{property:LanguageName}" DefaultValue="{Culture:LanguageName}" />
+            <InputClaim ClaimTypeReferenceId="LCID" PartnerClaimType="{property:LCID}" DefaultValue="{Culture:LCID}" />
+            <InputClaim ClaimTypeReferenceId="RegionName" PartnerClaimType="{property:RegionName}" DefaultValue=" {Culture:RegionName}" />
+            <!-- You may want to set value of ContentDefinitionReferenceId in the UserJourney if you are planning to use multiple jounrneys in the same policy.  -->
+            <InputClaim ClaimTypeReferenceId="ContentDefinitionReferenceId" PartnerClaimType="{property:ContentDefinitionReferenceId}" DefaultValue="api.signuporsignin" />
+            <InputClaim ClaimTypeReferenceId="Sythentic" PartnerClaimType="{property:Sythentic}" DefaultValue="{OAUTH-KV:sythentic}" />
+          </InputClaims>
+        </TechnicalProfile>
+        <TechnicalProfile Id="AppInsights-SignInRequest">
+          <InputClaims>
+            <!-- An input claim with a PartnerClaimType="eventName" is required. This is used by the AzureApplicationInsightsProvider to create an event with the specified value. -->
+            <InputClaim ClaimTypeReferenceId="EventType" PartnerClaimType="eventName" DefaultValue="SignInRequest" />
+          </InputClaims>
+          <IncludeTechnicalProfile ReferenceId="AppInsights-Common" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="AppInsights-SignUpRequest">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="EventType" PartnerClaimType="eventName" DefaultValue="SignUpRequest" />
+          </InputClaims>
+          <IncludeTechnicalProfile ReferenceId="AppInsights-Common" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="AppInsights-SignInCompleted">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="EventType" PartnerClaimType="eventName" DefaultValue="SignInCompleted" />
+            <InputClaim ClaimTypeReferenceId="federatedUser" PartnerClaimType="{property:FederatedUser}" DefaultValue="false" />
+            <InputClaim ClaimTypeReferenceId="parsedDomain" PartnerClaimType="{property:FederationPartner}" DefaultValue="Not Applicable" />
+            <InputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="{property:objectId}" DefaultValue="Not Applicable" />
+            <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="{property:signInName}" DefaultValue="Not Applicable" />
+          </InputClaims>
+          <IncludeTechnicalProfile ReferenceId="AppInsights-Common" />
+        </TechnicalProfile>
+        <!-- Additional AppInsights Profiles -->
+        <TechnicalProfile Id="AppInsights-JourneyStarted">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="EventType" PartnerClaimType="eventName" DefaultValue="JourneyStarted" />
+            <InputClaim ClaimTypeReferenceId="federatedUser" PartnerClaimType="{property:FederatedUser}" DefaultValue="false" />
+            <InputClaim ClaimTypeReferenceId="parsedDomain" PartnerClaimType="{property:FederationPartner}" DefaultValue="Not Applicable" />
+          </InputClaims>
+          <IncludeTechnicalProfile ReferenceId="AppInsights-Common" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="AppInsights-JourneyCompleted">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="EventType" PartnerClaimType="eventName" DefaultValue="JourneyCompleted" />
+            <InputClaim ClaimTypeReferenceId="federatedUser" PartnerClaimType="{property:FederatedUser}" DefaultValue="false" />
+            <InputClaim ClaimTypeReferenceId="parsedDomain" PartnerClaimType="{property:FederationPartner}" DefaultValue="Not Applicable" />
+            <InputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="{property:objectId}" DefaultValue="Not Applicable" />
+            <!-- <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="{property:signInName}" /> -->
+            <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="{property:signInNames.emailAddress}" DefaultValue="Not Applicable" />
+          </InputClaims>
+          <IncludeTechnicalProfile ReferenceId="AppInsights-Common" />
+        </TechnicalProfile>
+        <TechnicalProfile Id="AppInsights-SignUpCompleted">
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="EventType" PartnerClaimType="eventName" DefaultValue="SignUpCompleted" />
+            <InputClaim ClaimTypeReferenceId="objectId" PartnerClaimType="{property:objectId}" DefaultValue="Not Applicable" />
+            <InputClaim ClaimTypeReferenceId="email" PartnerClaimType="{property:email}" />
+            <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="{property:signInName}" />
+            <InputClaim ClaimTypeReferenceId="signInName" PartnerClaimType="{property:signInNames.emailAddress}" DefaultValue="Not Applicable" />
+          </InputClaims>
+          <IncludeTechnicalProfile ReferenceId="AppInsights-Common" />
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+    <ClaimsProvider>
+      <DisplayName>Local Account SignIn</DisplayName>
+      <TechnicalProfiles>
+        <TechnicalProfile Id="login-NonInteractive">
+          <Metadata>
+            <Item Key="client_id">client_id</Item>
+            <Item Key="IdTokenAudience">IdTokenAudience</Item>
+          </Metadata>
+          <InputClaims>
+            <InputClaim ClaimTypeReferenceId="client_id" DefaultValue="client_id" />
+            <InputClaim ClaimTypeReferenceId="resource_id" PartnerClaimType="resource" DefaultValue="IdTokenAudience" />
+          </InputClaims>
+        </TechnicalProfile>
+      </TechnicalProfiles>
+    </ClaimsProvider>
+  </ClaimsProviders>
+  <UserJourneys>
+    <UserJourney Id="SignUpOrSignIn">
+      <OrchestrationSteps>
+        <!-- AppInsight related step -->
+        <OrchestrationStep Order="1" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="TrackJourneyStarted" TechnicalProfileReferenceId="AppInsights-JourneyStarted" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <!-- AppInsight related step -->
+        <OrchestrationStep Order="2" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="TrackSignInRequest" TechnicalProfileReferenceId="AppInsights-SignInRequest" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="3" Type="CombinedSignInAndSignUp" ContentDefinitionReferenceId="api.signuporsignin">
+          <ClaimsProviderSelections>
+            <ClaimsProviderSelection ValidationClaimsExchangeId="LocalAccountSigninEmailExchange" />
+          </ClaimsProviderSelections>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="LocalAccountSigninEmailExchange" TechnicalProfileReferenceId="SelfAsserted-LocalAccountSignin-Email" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <!-- AppInsight related step -->
+        <OrchestrationStep Order="4" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="TrackSignInCompleted" TechnicalProfileReferenceId="AppInsights-SignInCompleted" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <!-- AppInsight related step -->
+        <OrchestrationStep Order="5" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="TrackSignUpRequest" TechnicalProfileReferenceId="AppInsights-SignUpRequest" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="6" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="true">
+              <Value>objectId</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="SignUpWithLogonEmailExchange" TechnicalProfileReferenceId="LocalAccountSignUpWithLogonEmail" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <!-- AppInsight related step -->
+        <OrchestrationStep Order="7" Type="ClaimsExchange">
+          <Preconditions>
+            <Precondition Type="ClaimsExist" ExecuteActionsIf="false">
+              <Value>newUser</Value>
+              <Action>SkipThisOrchestrationStep</Action>
+            </Precondition>
+          </Preconditions>
+          <ClaimsExchanges>
+            <ClaimsExchange Id="TrackSignUpCompleted" TechnicalProfileReferenceId="AppInsights-SignUpCompleted" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <!-- This step reads any user attributes that we may not have received when in the token. -->
+        <OrchestrationStep Order="8" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="AADUserReadWithObjectId" TechnicalProfileReferenceId="AAD-UserReadUsingObjectId" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+        <OrchestrationStep Order="9" Type="SendClaims" CpimIssuerTechnicalProfileReferenceId="JwtIssuer" />
+        <!-- AppInsight related step -->
+        <OrchestrationStep Order="10" Type="ClaimsExchange">
+          <ClaimsExchanges>
+            <ClaimsExchange Id="TrackJourneyCompleted" TechnicalProfileReferenceId="AppInsights-JourneyCompleted" />
+          </ClaimsExchanges>
+        </OrchestrationStep>
+      </OrchestrationSteps>
+      <ClientDefinition ReferenceId="DefaultWeb" />
+    </UserJourney>
+  </UserJourneys>
+</TrustFrameworkPolicy>
