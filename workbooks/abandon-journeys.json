@@ -1,0 +1,234 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "## List of Abandon Journeys\n---------------------------\n### Select the CorrelationId to view details about the jounrey."
+      },
+      "name": "text - 2"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "55f2a818-f152-4dd1-9d59-c363aac9072e",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "type": 4,
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          },
+          {
+            "id": "cf9c0808-2ca8-4c82-9254-74cc250c3267",
+            "version": "KqlParameterItem/1.0",
+            "name": "AppInsightsId",
+            "type": 1,
+            "isRequired": true,
+            "value": "",
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 9"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "\n///////////////////////\n// Abandon Journeys\n///////////////////////\nlet policy_Id=\"B2C_1A_Signup_Signin_AppInsights\";\nlet journeyEmpty = (journeyName:string) { iif(journeyName == \"\", \"Journey Not Finished\",journeyName) };\nlet journeyCount =  (journeyName:string) { journeyName };\nlet journey =  (journeyName:string) { app(\"{AppInsightsId:value}\").customEvents  | where timestamp > ago(180d)\n                                        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n                                        | extend Policy_ = tostring(customDimensions.Policy)\n                                        | where Policy_ == policy_Id\n                                        | where name == journeyName\n                                        | project CorrelationId_, Policy_, name, timestamp\n                                        };\njourney(\"JourneyStarted\") \n| \n    join kind=fullouter         (journey(\"JourneyCompleted\") \n          | project _policy_Id=policy_Id, _name=name, CorrelationId_ )\n    on $left.CorrelationId_ == $right.CorrelationId_\n    | where _name == \"\"\n    | project Started=name,Finished=journeyEmpty(_name), timestamp, policy_Id, CorrelationId=CorrelationId_\n    | take 250 //Default limit for workbook\n   ",
+        "size": 4,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "TimeRange",
+        "exportFieldName": "CorrelationId",
+        "exportParameterName": "CorrelationId",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Started",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "JourneyStarted",
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Finished",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "==",
+                    "thresholdValue": "Journey Not Finished",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "query - 2"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Journey Details\n-------------------"
+      },
+      "name": "text - 7"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "app(\"app-insights-b2c\").customEvents  \n        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n        | extend Policy_ = tostring(customDimensions.Policy)\n        | where CorrelationId_ ==  '{CorrelationId}' \n        | project CorrelationId_, Policy_, name, timestamp\n        | order by timestamp desc",
+        "size": 4,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "sortBy": [
+            {
+              "itemKey": "name",
+              "sortOrder": 1
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "name",
+            "sortOrder": 1
+          }
+        ]
+      },
+      "name": "query - 2"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### SignIn Logs\n-------------------"
+      },
+      "name": "text - 5"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "\nSigninLogs\n    | where CorrelationId == '{CorrelationId}'\n    | project  TimeGenerated, UserPrincipalName, CorrelationId, ClientAppUsed, AppDisplayName, ResultDescription, ResultType, tostring( DeviceDetail), IPAddress\n    | order by TimeGenerated desc\n\n",
+        "size": 1,
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 3"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Audit Logs\n-------------------"
+      },
+      "name": "text - 6"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "\nAuditLogs\n   | where CorrelationId  == '{CorrelationId}'\n   | project CorrelationId,TimeGenerated, Result, tostring(TargetResources), tostring(AdditionalDetails), OperationName\n   | order by TimeGenerated desc \n",
+        "size": 0,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 4"
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
