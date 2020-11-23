@@ -165,8 +165,6 @@ Here is an example of an alert notification email.
 
    ![Create a alert rule](images/alert-email-notification.png)
 
-### Available only to IEF a.k.a custom policy)
-
 ## FAQ
 
 - How do I know Azure AD B2C logs are available in Logs Analytics workspace?
