@@ -115,10 +115,10 @@ The [Search by CorrelationId](workbook/search-by-correlationid.json) workbook al
   ![Search by CorrelatiionId](images/wrkb-search-by-correlationid.png)
     
  ### List of Abandon Journeys
-The [List of Abandon Journeys](workbooks/abandon-journeys.json) workbook allows you to gain insights about user journeys that are started by the user but are not completed. It also allows you to select a particular journey and gather more information from Sign-In and Audit Logs based on the correlationId.
+The [List of Abandon Journeys](workbooks/abandon-journeys.json) workbook allows you to gain insights about user journeys that are started by the user but are not completed. It also allows you to select a particular journey and gather more information from Sign-In and Audit Logs based on the correlationId. The sample Azure AD B2C is available [here](https://github.com/azure-ad-b2c/siem/tree/master/policy)
 
 >>  Please note that this workbook requires Application Insights to be configured for the Azure AD B2C policy. For more information about configuring Application Insights please read the document [Track user behavior in Azure Active Directory B2C using Application Insights](https://docs.microsoft.com/en-us/azure/active-directory-b2c/analytics-with-application-insights). 
-
+   
    ![Abandon Journey](images/abandon-journey.png)
  
 ## Alerts
