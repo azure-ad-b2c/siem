@@ -37,6 +37,7 @@ The [Workbooks](workbooks) folder within this repo contains four workbooks in th
 - [MFA](workbooks/mfa-operations.json) 
 - [Conditional Access](workbooks/ca-report.json)
 - [Search by CorrelationId](workbooks/search-by-correlationid.json)
+- [List of Abandon Journeys](workbooks/abandon-journeys.json)
 
 The Azure AD B2C [Dashboard](workbooks/dashboard.json) workbook provides various reports related to **User Insights** and **Authentications** for Azure AD B2C Tenant.
 
@@ -113,6 +114,12 @@ The [Search by CorrelationId](workbook/search-by-correlationid.json) workbook al
 
   ![Search by CorrelatiionId](images/wrkb-search-by-correlationid.png)
     
+ ### List of Abandon Journeys
+The [List of Abandon Journeys](workbooks/abandon-journeys.json) workbook allows you to gain insights about user journeys that are started by the user but are not completed. It also allows you to select a particular journey and gather more information from Sign-In and Audit Logs based on the correlationId.
+
+>>  Please note that this workbook requires Application Insights to be configured for the Azure AD B2C policy. For more information about configuring Application Insights please read the document [Track user behavior in Azure Active Directory B2C using Application Insights](https://docs.microsoft.com/en-us/azure/active-directory-b2c/analytics-with-application-insights). 
+
+   ![Abandon Journey](images/abandon-journey.png)
  
 ## Alerts
 
@@ -157,6 +164,8 @@ Azure Monitor and Service Health alerts use action groups to notify users that a
 Here is an example of an alert notification email. 
 
    ![Create a alert rule](images/alert-email-notification.png)
+
+### Available only to IEF a.k.a custom policy)
 
 ## FAQ
 
