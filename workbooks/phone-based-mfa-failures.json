@@ -1,0 +1,435 @@
+{
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "161374c5-9e61-4c8a-aa66-5e7853369ff8",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "value": {
+              "durationMs": 2592000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 8"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Total Failed Phone Authentications"
+      },
+      "name": "text - 19"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where TimeGenerated >= ago(180d)\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Phone,IPAddress,Method, Result, ResultDescription, OperationName, addtionalDetails\n| summarize count() by Result\n| summarize TotalFailure = sum(count_)",
+        "size": 4,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "tiles",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "TotalFailure",
+              "formatter": 4,
+              "formatOptions": {
+                "palette": "blue"
+              }
+            }
+          ]
+        },
+        "tileSettings": {
+          "titleContent": {
+            "formatter": 1
+          },
+          "subtitleContent": {
+            "columnMatch": "TotalFailure",
+            "formatter": 18,
+            "formatOptions": {
+              "thresholdsOptions": "icons",
+              "thresholdsGrid": [
+                {
+                  "operator": ">",
+                  "thresholdValue": "0",
+                  "representation": "2",
+                  "text": "{0}{1}"
+                },
+                {
+                  "operator": "Default",
+                  "thresholdValue": null,
+                  "representation": "success",
+                  "text": "{0}{1}"
+                }
+              ]
+            }
+          },
+          "showBorder": true
+        },
+        "graphSettings": {
+          "type": 0
+        }
+      },
+      "name": "query - 2"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Phone Failure Reasons"
+      },
+      "name": "text - 18"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Phone,IPAddress,Method, Result, Reason=ResultDescription, OperationName, addtionalDetails\n| summarize  FailureCount = count() by Reason\n| order by FailureCount",
+        "size": 1,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "FailureCount",
+              "formatter": 20,
+              "formatOptions": {
+                "palette": "orangeRed"
+              }
+            },
+            {
+              "columnMatch": "ResultDescription",
+              "formatter": 1
+            },
+            {
+              "columnMatch": "FailureReasons",
+              "formatter": 20,
+              "formatOptions": {
+                "palette": "coldHot"
+              }
+            }
+          ]
+        },
+        "tileSettings": {
+          "showBorder": false,
+          "titleContent": {
+            "columnMatch": "ResultDescription",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "FailureReasons",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            },
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        },
+        "graphSettings": {
+          "type": 0,
+          "topContent": {
+            "columnMatch": "ResultDescription",
+            "formatter": 1
+          },
+          "centerContent": {
+            "columnMatch": "FailureReasons",
+            "formatter": 1,
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        }
+      },
+      "name": "query - 17"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Phone Numbers Failures Per IPAddress"
+      },
+      "name": "text - 5"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Phone,IPAddress,Method, Result, ResultDescription, OperationName, addtionalDetails\n| summarize Count = count() by Phone, IPAddress\n| order by Count\n| render  table   \n",
+        "size": 1,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Count",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "coldHot"
+              }
+            },
+            {
+              "columnMatch": "FailureCount",
+              "formatter": 4,
+              "formatOptions": {
+                "min": 1,
+                "max": 50,
+                "palette": "coldHot"
+              }
+            }
+          ]
+        }
+      },
+      "name": "query - 9"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Failed Phone Calls Per Device\nThese are failures based on devices Operating System and Browser. \n"
+      },
+      "name": "text - 12"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| extend AgentDetails = parse_user_agent(extractjson(\"$.[3].value\",tostring(AdditionalDetails)), dynamic([\"browser\",\"os\",\"device\"])) \n| extend BrowserFamily=extractjson(\"$.['Browser'].Family\",tostring(AgentDetails))\n| extend BrowserMajorVersion=extractjson(\"$.['Browser'].MajorVersion\",tostring(AgentDetails))\n| extend BrowserMinorVersion=extractjson(\"$.['Browser'].MinorVersion\",tostring(AgentDetails))\n| extend DeviceFamily=extractjson(\"$.['Device'].Family\",tostring(AgentDetails))\n| extend DeviceBrand=extractjson(\"$.['Device'].Brand\",tostring(AgentDetails))\n| extend DeviceModel=extractjson(\"$.['Device'].Model\",tostring(AgentDetails))\n| extend OSFamily=extractjson(\"$.['OperatingSystem'].Family\",tostring(AgentDetails))\n| extend OSMajorVersion=extractjson(\"$.['OperatingSystem'].MajorVersion\",tostring(AgentDetails))\n| extend OSMinorVersion=extractjson(\"$.['OperatingSystem'].MinorVersion\",tostring(AgentDetails))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),BrowserFamily,OSFamily,Phone,IPAddress,Method, Result, ResultDescription, OperationName, addtionalDetails\n| summarize Count = count() by BrowserFamily, OSFamily, Phone\n| order by Count\n| render  table   \n",
+        "size": 4,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Count",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "coldHot",
+                "compositeBarSettings": {
+                  "labelText": "",
+                  "columnSettings": []
+                }
+              }
+            }
+          ]
+        }
+      },
+      "name": "query - 13"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Failed Phone Authenications Overtime (Per Day)"
+      },
+      "name": "text - 20"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Phone,IPAddress,Method, Result, ResultDescription, OperationName, addtionalDetails\n| summarize Count = count() by Phone, IPAddress, bin (TimeGenerated, 1d)\n| order by Count\n| render  timechart   \n",
+        "size": 0,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 15"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Failed Phone Authenications Per IPAddress Overtime (Per Day)"
+      },
+      "name": "text - 19"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Phone,IPAddress,Method, Result, ResultDescription, OperationName, addtionalDetails\n| summarize Count = count() by IPAddress, bin (TimeGenerated, 1d)\n| order by Count\n| render  timechart   \n",
+        "size": 0,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 16"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Phone Numbers with Bad Reptuation"
+      },
+      "name": "text - 14"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| where ResultDescription contains (\"reputation\")\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Phone,IPAddress,Method, Result, ResultDescription, OperationName, addtionalDetails\n//| order by Count\n//| render  table   \n",
+        "size": 4,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "sortBy": [
+            {
+              "itemKey": "ResultDescription",
+              "sortOrder": 2
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "ResultDescription",
+            "sortOrder": 2
+          }
+        ]
+      },
+      "name": "query - 9"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Total Failures Per Phone Number\nPlease click on the phone number to view more details about the failures."
+      },
+      "name": "text - 11"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getCallerIpAddress = (data:string) \n    { \n       let ipStr= 'ClientIpAddress\",\"value\":\"'; //This is located within the additionalDetails attribute within the AuditLog\n       let i =  indexof(data,ipStr);\n       let j = indexof(data,'\"',i+strlen(ipStr)+1);\n       let k =  substring(data,i+strlen(ipStr));\n       let ClientIpAddress = split(k,'\"')[0];\n       ClientIpAddress\n    };\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| where Result != \"success\"\n| extend  Method=strcat(ad1,\",\",ad2)\n| where Method contains(\"PhoneCall\")\n| extend x = indexof(addtionalDetails,'+')\n| extend y = indexof(addtionalDetails,'\"',x)\n| extend Phone =  substring(addtionalDetails,x,y-x )\n| extend IPAddress= tostring((getCallerIpAddress(AdditionalDetails)))\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Phone,IPAddress,Method, Result, ResultDescription, OperationName, addtionalDetails\n| summarize Count = count() by Phone\n| order by Count\n| render  table   \n",
+        "size": 4,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "exportFieldName": "Phone",
+        "exportParameterName": "_Phone",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 10"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "## Failure Details\n"
+      },
+      "name": "text - 6"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "//print '{_Phone}'\nAuditLogs\n| where OperationName contains \"verify\" \n| extend addtionalDetails = tostring(AdditionalDetails)\n| where addtionalDetails contains \"VerificationMethod\"\n| extend ad1=extractjson(\"$.[5].value\",tostring(AdditionalDetails))\n| extend ad2 = extractjson(\"$.[4].value\",tostring(AdditionalDetails))\n| extend Method=strcat(ad1,\",\",ad2)\n| where Result != \"success\"\n| where Method contains ('{_Phone}')\n| project TimeGenerated, CorrelationId,Policy=extractjson(\"$.[1].value\",tostring(AdditionalDetails)),Method, Result, ResultDescription, OperationName, addtionalDetails\n| order by TimeGenerated",
+        "size": 0,
+        "timeContext": {
+          "durationMs": 2592000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 3"
+    }
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
