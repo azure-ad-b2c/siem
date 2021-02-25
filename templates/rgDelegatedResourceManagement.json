@@ -37,7 +37,8 @@
             ]
         },
         "rgName": {
-            "type": "<Replace with Resource Group's Name e.g. az-monitor-rg>"
+            "type": "string",
+            "defaultValue": "<Replace with Resource Group's Name e.g. az-monitor-rg>"
         }              
     },
     "variables": {
