@@ -121,8 +121,12 @@ The [List of Abandon Journeys](workbooks/abandon-journeys.json) workbook allows 
 
 >>  Please note that this workbook requires Application Insights to be configured for the Azure AD B2C policy. For more information about configuring Application Insights please read the document [Track user behavior in Azure Active Directory B2C using Application Insights](https://docs.microsoft.com/en-us/azure/active-directory-b2c/analytics-with-application-insights). 
    
-   ![Abandon Journey](images/abandon-journey.png)
+  ![Abandon Journey](images/abandon-journey.png)
  
+  Please note that AppInsightsId is the name of the Application Insights instance which you have configured within Azure AD B2C policy.
+  
+  ![Abandon Journey-AppInsights](images/abandon-journey-appinsights.png)
+
 ### Phone Authentication Failures
 The [Phone Authentication Failures](workbooks/phone-failures-dashboard.json) workbook allows you to gain insights about phone authentication related failures.
 
