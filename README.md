@@ -36,6 +36,7 @@ The [Workbooks](workbooks) folder within this repo contains four workbooks in th
 
 - [Dashboard](workbooks/dashboard.json) 
 - [MFA](workbooks/mfa-operations.json) 
+- [Risk Dedections](workbooks/risk-detections.json)
 - [Conditional Access](workbooks/ca-report.json)
 - [Search by CorrelationId](workbooks/search-by-correlationid.json)
 - [List of Abandon Journeys](workbooks/abandon-journeys.json)
@@ -94,6 +95,27 @@ The workbook will display reports in the form of a dashboard.
      ![MFA](images/wrkb-mfa-1.png)
      ![MFA2](images/wrkb-mfa-2.png)
      ![MFA3](images/wrkb-mfa-3.png)
+
+### Risk Detections
+
+This report uses Azure AD B2C Sign-in logs to capture risk detections. More detail on these risk detections and remediation can be found in the article, [Risk detection and remediation](https://docs.microsoft.com/azure/active-directory/identity-protection/overview-identity-protection?WT.mc_id=Portal-fx#risk-detection-and-remediation).
+
+> **NOTE**: Please note that Azure AD B2C Premium P2 is required for some Identity Protection features and hence the risk detections. Please read about [Pricing tier](https://docs.microsoft.com/en-us/azure/active-directory-b2c/identity-protection-investigate-risk?pivots=b2c-user-flow#pricing-tier) and its influence on risk detections.
+     
+- Aggregated Risk Levels
+- Risks Levels during SignIn 
+- Risk Levels by Region
+- Risk Events by IP Address (Filterable)
+- Risk Events by Type (Filterable)
+    -   Risk Events Details (based on selected Risk Type)
+- Risk Events by Geo Coordinates (Filterable)
+- Risks Events Over Time
+
+    ![RiskDetection1](https://github.com/azure-ad-b2c/siem/blob/master/images/risk-detections-1.png)
+    ![RiskDetection1](https://github.com/azure-ad-b2c/siem/blob/master/images/risk-detections-2.png)
+    ![RiskDetection1](https://github.com/azure-ad-b2c/siem/blob/master/images/risk-detections-3.png)
+ 
+
 
 ### Conditional Access Report
 
