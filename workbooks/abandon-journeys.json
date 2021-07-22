@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## List of Abandon Journeys\n---------------------------\n### Select the CorrelationId to view details about the jounrey."
+        "json": "## List of Abandon Journeys\n---------------------------\n### Select the CorrelationId to view details about the journey."
       },
       "name": "text - 2"
     },
