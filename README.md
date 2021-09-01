@@ -36,7 +36,7 @@ The [Workbooks](workbooks) folder within this repo contains four workbooks in th
 
 - [Dashboard](workbooks/dashboard.json) 
 - [MFA](workbooks/mfa-operations.json) 
-- [Risk Dedections](workbooks/risk-detections.json)
+- [Risk Detections](workbooks/risk-detections.json)
 - [Conditional Access](workbooks/ca-report.json)
 - [Search by CorrelationId](workbooks/search-by-correlationid.json)
 - [List of Abandon Journeys](workbooks/abandon-journeys.json)
