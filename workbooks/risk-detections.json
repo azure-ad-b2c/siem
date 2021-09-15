@@ -4,7 +4,7 @@
     {
       "type": 1,
       "content": {
-        "json": "## Risk Detections (Azure AD B2C)\r\n\r\nThis report uses Azure AD B2C Sign-in logs to capture risk detections. \r\n\r\nMore detail on these risk detection and remediation can be found in the article, [Risk detection and remediation](https://docs.microsoft.com/en-us/azure/active-directory/identity-protection/overview-identity-protection#risk-detection-and-remediation).\r\n",
+        "json": "## Risk Detections (Azure AD B2C)\r\n\r\nThis report uses Azure AD B2C Sign-in logs to capture risk detections and related data. \r\nRisk detection is part of the Azure Identity Protection which requires Azure AD Premium P2 license.\r\n\r\nLearn more about risk detection: [Risk detection and remediation](https://docs.microsoft.com/en-us/azure/active-directory/identity-protection/overview-identity-protection#risk-detection-and-remediation). \r\n\r\nAccess this and other Azure AD B2C workbooks on [GitHub](https://aka.ms/b2csiem).\r\n\r\n",
         "style": "info"
       },
       "name": "text - 7"
@@ -22,7 +22,7 @@
             "type": 4,
             "isRequired": true,
             "value": {
-              "durationMs": 5184000000
+              "durationMs": 7776000000
             },
             "typeSettings": {
               "selectableValues": [
@@ -83,7 +83,88 @@
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces"
       },
+      "customWidth": "25",
       "name": "parameters - 10"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "e4cef524-5572-41a3-928e-11e20b0a1a08",
+            "version": "KqlParameterItem/1.0",
+            "name": "FilterBySignInRiskLevel",
+            "label": "Sign-in Risk",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "",
+            "delimiter": ",",
+            "query": "SigninLogs\n//| where RiskLevelDuringSignIn != \"none\"\n| distinct RiskLevelDuringSignIn\n\n",
+            "value": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 0
+            },
+            "timeContextFromParameter": "TimeRange",
+            "defaultValue": "value::all",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "25",
+      "name": "parameters - 10 - Copy"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "57667de6-2727-43ec-8118-88fd78c131a0",
+            "version": "KqlParameterItem/1.0",
+            "name": "FilterByCountry",
+            "label": "Country",
+            "type": 2,
+            "multiSelect": true,
+            "quote": "",
+            "delimiter": ",",
+            "query": "SigninLogs\n| where Location != \"\"\n| distinct Location\n\n",
+            "value": [
+              "value::all"
+            ],
+            "typeSettings": {
+              "additionalResourceOptions": [
+                "value::all"
+              ],
+              "showDefault": false
+            },
+            "timeContext": {
+              "durationMs": 0
+            },
+            "timeContextFromParameter": "TimeRange",
+            "defaultValue": "value::all",
+            "queryType": 0,
+            "resourceType": "microsoft.operationalinsights/workspaces"
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "customWidth": "25",
+      "name": "parameters - 10 - Copy - Copy"
     },
     {
       "type": 9,
@@ -117,41 +198,70 @@
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces"
       },
+      "customWidth": "25",
       "name": "parameters - 10"
     },
     {
-      "type": 3,
+      "type": 1,
       "content": {
-        "version": "KqlItem/1.0",
-        "query": "//Shows Risk Detections (Latency: https://docs.microsoft.com/en-us/azure/active-directory/reports-monitoring/reference-reports-latencies)\n// Only realtime time event gets logged in SignIn log\nSigninLogs\n| where RiskLevelAggregated != \"none\"\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| project TimeGenerated, CorrelationId,  IPAddress, Location, UserDisplayName, RiskEventTypes_V2, RiskEventTypes, RiskDetail, RiskState, IsRisky, RiskLevelAggregated, UserId\n| summarize count() by RiskLevelAggregated\n\n",
-        "size": 1,
-        "showAnalytics": true,
-        "title": "Aggregated Risk Levels",
-        "timeContext": {
-          "durationMs": 5184000000
-        },
-        "timeContextFromParameter": "TimeRange",
-        "showExportToExcel": true,
-        "queryType": 0,
-        "resourceType": "microsoft.operationalinsights/workspaces",
-        "visualization": "piechart"
+        "json": "<br/><br/>\n"
       },
-      "customWidth": "50",
-      "showPin": true,
-      "name": "query - 0"
+      "name": "text - 15"
+    },
+    {
+      "type": 11,
+      "content": {
+        "version": "LinkItem/1.0",
+        "style": "tabs",
+        "links": [
+          {
+            "id": "71ab978a-c66d-47dc-aa0a-6a1a1b5d4d93",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Overview",
+            "subTarget": "overview",
+            "style": "link"
+          },
+          {
+            "id": "4ba27946-dc0b-4978-b5d6-97591a3bac6e",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Risky Sign-ins",
+            "subTarget": "details",
+            "style": "link"
+          },
+          {
+            "id": "078a8231-b691-41eb-85f6-bd992de8e57f",
+            "cellValue": "selectedTab",
+            "linkTarget": "parameter",
+            "linkLabel": "Risky Users",
+            "subTarget": "riskyusers",
+            "style": "link"
+          }
+        ]
+      },
+      "name": "links - 5"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "<br/><br/>\n\n"
+      },
+      "name": "text - 15 - Copy"
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "//RiskLevelDuringSignIn\nSigninLogs\n| where RiskLevelDuringSignIn != \"none\"\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| project TimeGenerated, CorrelationId,  IPAddress, Location, UserDisplayName, RiskEventTypes_V2, RiskEventTypes, RiskDetail, RiskState, IsRisky, RiskLevelAggregated, RiskLevelDuringSignIn, UserId\n| summarize count() by RiskLevelDuringSignIn",
-        "size": 1,
+        "query": "\nSigninLogs\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| project TimeGenerated, CorrelationId,  IPAddress, Location, UserDisplayName, RiskEventTypes_V2, RiskEventTypes, RiskDetail, RiskState, IsRisky, RiskLevelAggregated, RiskLevelDuringSignIn, UserId\n| project RiskLevelDuringSignIn\n| summarize Total= count() by RiskLevelDuringSignIn\n",
+        "size": 2,
         "showAnalytics": true,
-        "title": "Risk Levels During SignIn",
+        "title": "Sign-in risk levels",
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 20214000000
         },
         "timeContextFromParameter": "TimeRange",
+        "showRefreshButton": true,
         "showExportToExcel": true,
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -159,10 +269,69 @@
         "gridSettings": {
           "formatters": [
             {
+              "columnMatch": "high",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "red",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "low",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "yellow",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "medium",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "orange",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "none",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "green",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
               "columnMatch": "Count",
               "formatter": 4,
               "formatOptions": {
-                "showIcon": true,
                 "aggregation": "Count"
               },
               "numberFormat": {
@@ -173,24 +342,180 @@
               }
             }
           ],
-          "filter": true
+          "labelSettings": [
+            {
+              "columnId": "high",
+              "label": "High"
+            },
+            {
+              "columnId": "low",
+              "label": "Low"
+            },
+            {
+              "columnId": "medium",
+              "label": "Medium"
+            },
+            {
+              "columnId": "none",
+              "label": "No Risk"
+            }
+          ]
         },
-        "sortBy": []
+        "sortBy": [],
+        "tileSettings": {
+          "titleContent": {
+            "formatter": 1
+          },
+          "subtitleContent": {
+            "columnMatch": "RiskLevelDuringSignIn",
+            "formatter": 18,
+            "formatOptions": {
+              "thresholdsOptions": "icons",
+              "thresholdsGrid": [
+                {
+                  "operator": "contains",
+                  "thresholdValue": "none",
+                  "representation": "success",
+                  "text": "No Risk"
+                },
+                {
+                  "operator": "contains",
+                  "thresholdValue": "medium",
+                  "representation": "2",
+                  "text": "Medium"
+                },
+                {
+                  "operator": "contains",
+                  "thresholdValue": "high",
+                  "representation": "3",
+                  "text": "High"
+                },
+                {
+                  "operator": "contains",
+                  "thresholdValue": "low",
+                  "representation": "info",
+                  "text": "Low"
+                },
+                {
+                  "operator": "Default",
+                  "thresholdValue": null,
+                  "representation": "success",
+                  "text": "{0}{1}"
+                }
+              ],
+              "compositeBarSettings": {
+                "labelText": "",
+                "columnSettings": []
+              }
+            }
+          },
+          "leftContent": {
+            "columnMatch": "Total",
+            "formatter": 1,
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "style": "decimal",
+                "maximumFractionDigits": 2,
+                "maximumSignificantDigits": 3
+              }
+            }
+          },
+          "showBorder": true
+        },
+        "graphSettings": {
+          "type": 0,
+          "topContent": {
+            "columnMatch": "RiskLevelDuringSignIn",
+            "formatter": 1
+          },
+          "centerContent": {
+            "columnMatch": "count_",
+            "formatter": 1,
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        },
+        "chartSettings": {
+          "seriesLabelSettings": [
+            {
+              "seriesName": "none",
+              "label": "No Risk"
+            }
+          ]
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
       },
       "customWidth": "50",
       "showPin": true,
-      "name": "query - 1"
+      "name": "query - 1 - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| extend RiskEvent = tolower(RiskEventTypes_V2)\n| summarize Total=count() by RiskEvent, IPAddress\n| order by Total",
-        "size": 1,
+        "query": "SigninLogs\r\n| where RiskLevelDuringSignIn != \"none\"\r\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\r\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\r\n| where Location in (split('{FilterByCountry}',\",\")) \r\n| project TimeGenerated, CorrelationId, RiskLevelDuringSignIn,  IPAddress, Location, UserDisplayName, RiskEventTypes_V2, RiskEventTypes, RiskDetail, RiskState, IsRisky, RiskLevelAggregated, UserId\r\n| summarize count() by  RiskLevelDuringSignIn, Location\r\n",
+        "size": 2,
         "showAnalytics": true,
-        "title": "Risk Events with IP Address",
+        "title": "Total sign-in risk events by country",
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "map",
+        "mapSettings": {
+          "locInfo": "CountryRegion",
+          "locInfoColumn": "Location",
+          "sizeSettings": "count_",
+          "sizeAggregation": "Sum",
+          "labelSettings": "Location",
+          "legendMetric": "count_",
+          "legendAggregation": "Sum",
+          "itemColorSettings": {
+            "nodeColorField": "count_",
+            "colorAggregation": "Sum",
+            "type": "heatmap",
+            "heatmapPalette": "yellowOrangeRed"
+          }
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
+      "customWidth": "50",
+      "showPin": true,
+      "name": "query - 2",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| extend RiskEvent = tolower(RiskEventTypes_V2)\n| extend User = tolower(Identity)\n| extend locationDetailsJSON = parse_json(LocationDetails)\n| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n| extend GeoCoordinatesMapLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",User)\n| project IPAddress, Location, Latitude, Longitude, GeoCoordinatesMapLink, RiskLevelDuringSignIn\n| summarize Total = count() by IPAddress,Latitude, Longitude, GeoCoordinatesMapLink, RiskLevelDuringSignIn, Location\n| order by Total desc\n",
+        "size": 2,
+        "showAnalytics": true,
+        "title": "Total sign-in risk events by IP address",
+        "timeContext": {
+          "durationMs": 20214000000
         },
         "timeContextFromParameter": "TimeRange",
         "showExportToExcel": true,
@@ -199,6 +524,104 @@
         "visualization": "table",
         "gridSettings": {
           "formatters": [
+            {
+              "columnMatch": "IPAddress",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "View",
+                    "text": "{0}{1}"
+                  }
+                ],
+                "customColumnWidthSetting": "3%"
+              }
+            },
+            {
+              "columnMatch": "Latitude",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "colors",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": null,
+                    "text": "{0}{1}"
+                  }
+                ],
+                "customColumnWidthSetting": "3%"
+              }
+            },
+            {
+              "columnMatch": "Longitude",
+              "formatter": 0,
+              "formatOptions": {
+                "customColumnWidthSetting": "3%"
+              }
+            },
+            {
+              "columnMatch": "GeoCoordinatesMapLink",
+              "formatter": 7,
+              "formatOptions": {
+                "linkTarget": "Url",
+                "linkLabel": "View in Bing Maps",
+                "customColumnWidthSetting": "0.5%"
+              }
+            },
+            {
+              "columnMatch": "RiskLevelDuringSignIn",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "low",
+                    "representation": "1",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "medium",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": null,
+                    "text": "{0}{1}"
+                  }
+                ],
+                "customColumnWidthSetting": "4%"
+              }
+            },
+            {
+              "columnMatch": "Location",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Globe",
+                    "text": "{0}{1}"
+                  }
+                ],
+                "customColumnWidthSetting": "1%"
+              }
+            },
             {
               "columnMatch": "Total",
               "formatter": 8,
@@ -220,60 +643,264 @@
               }
             }
           ],
-          "filter": true
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "IPAddress",
+              "label": "IP address"
+            },
+            {
+              "columnId": "Latitude"
+            },
+            {
+              "columnId": "Longitude"
+            },
+            {
+              "columnId": "GeoCoordinatesMapLink",
+              "label": "Map"
+            },
+            {
+              "columnId": "RiskLevelDuringSignIn",
+              "label": "Sign-in risk"
+            },
+            {
+              "columnId": "Location",
+              "label": "Country"
+            },
+            {
+              "columnId": "Total"
+            }
+          ]
         },
         "sortBy": []
       },
-      "customWidth": "50",
-      "showPin": true,
-      "name": "query - 1 - Copy"
-    },
-    {
-      "type": 3,
-      "content": {
-        "version": "KqlItem/1.0",
-        "query": "SigninLogs\r\n| where RiskState != \"none\"\r\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\r\n| project TimeGenerated, CorrelationId,  IPAddress, Location, UserDisplayName, RiskEventTypes_V2, RiskEventTypes, RiskDetail, RiskState, IsRisky, RiskLevelAggregated, UserId\r\n| summarize count() by  Location\r\n",
-        "size": 0,
-        "showAnalytics": true,
-        "title": "Risky Sign Ins By Location",
-        "timeContext": {
-          "durationMs": 5184000000
-        },
-        "timeContextFromParameter": "TimeRange",
-        "showExportToExcel": true,
-        "queryType": 0,
-        "resourceType": "microsoft.operationalinsights/workspaces",
-        "visualization": "map",
-        "mapSettings": {
-          "locInfo": "CountryRegion",
-          "locInfoColumn": "Location",
-          "sizeSettings": "count_",
-          "sizeAggregation": "Sum",
-          "labelSettings": "Location",
-          "legendMetric": "count_",
-          "legendAggregation": "Sum",
-          "itemColorSettings": {
-            "nodeColorField": "count_",
-            "colorAggregation": "Sum",
-            "type": "heatmap",
-            "heatmapPalette": "greenRed"
-          }
-        }
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
       },
       "customWidth": "50",
       "showPin": true,
-      "name": "query - 2"
+      "name": "query - 1 - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| extend RiskEvent = tolower(RiskEventTypes_V2)\n| summarize Total=count() by RiskEventTypes_V2\n| order by Total",
-        "size": 1,
+        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| extend RiskEvent = tolower(RiskEventTypes_V2)\n| extend locationDetailsJSON = parse_json(LocationDetails)\n| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n| extend User = tolower(Identity)\n//| project Location, Latitude, Longitude, GeoCoordinatesMapLink, Total, IPAddress\n| summarize Total = count() by Latitude, Longitude, User, Location, IPAddress\n| extend GeoCoordinatesMapLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",User)\n| project Location, Latitude, Longitude, GeoCoordinatesMapLink, Total\n| order by Total desc\n\n//| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n//| extend GeoCoordinatesLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",Identity)\n//| project TimeGenerated,  RiskEvent,  RiskLevelAggregated, UserId, Identity, IPAddress, Location,  Latitude, Longitude, BingMapLink=GeoCoordinatesLink",
+        "size": 2,
         "showAnalytics": true,
-        "title": "Risk Events - Summary (select Risk Event to view details in the grid view below)",
+        "title": "Total sign-in risk events by geo coordinates",
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "exportedParameters": [
+          {
+            "fieldName": "RiskEventTypes",
+            "parameterName": "RiskEventTypes",
+            "parameterType": 1
+          },
+          {
+            "fieldName": "UserDisplayName",
+            "parameterName": "UserDisplayName",
+            "parameterType": 1
+          }
+        ],
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Location",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Globe",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "GeoCoordinatesMapLink",
+              "formatter": 7,
+              "formatOptions": {
+                "linkTarget": "Url",
+                "linkLabel": "View in Bing Maps"
+              }
+            },
+            {
+              "columnMatch": "Total",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "coldHot"
+              }
+            },
+            {
+              "columnMatch": "Count",
+              "formatter": 4,
+              "numberFormat": {
+                "unit": 17,
+                "options": {
+                  "style": "decimal"
+                }
+              }
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "Location"
+            },
+            {
+              "columnId": "Latitude"
+            },
+            {
+              "columnId": "Longitude"
+            },
+            {
+              "columnId": "GeoCoordinatesMapLink",
+              "label": "Map"
+            },
+            {
+              "columnId": "Total"
+            }
+          ]
+        },
+        "sortBy": []
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
+      "customWidth": "50",
+      "showPin": true,
+      "name": "query - 3 - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getValueByKey = (data: string, key: string) { \n    let helper = (data: string, key: string) {\n        let indexStart = indexof(data, key);\n        let endString = '\"';\n        let sub = substring(data, indexStart + strlen(key) + 11); //removing \"value\":\" 11 is the length\n        let indexEnd = indexof(sub, endString);\n        let value = substring(sub, 0, indexEnd);\n        value;\n    };\n    let endString = '\"';\n    let condtion  = data contains key;\n    iff(condtion, helper(data, key), \"N/A\");\n};\nSigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| summarize total1 = count() by CorrelationId\n| join kind=leftouter ( AuditLogs \n    | extend b2cpolicy = getValueByKey(tostring(AdditionalDetails), \"PolicyId\")\n    | where b2cpolicy != \"N/A\"\n    | distinct CorrelationId, b2cpolicy) on CorrelationId  \n| project total1, b2cpolicy, CorrelationId\n| summarize  policyCount= count(), TotalSum = sum(total1) by b2cpolicy\n| order by TotalSum\n",
+        "size": 2,
+        "showAnalytics": true,
+        "title": "Total sign-in risk events by B2C policy",
+        "timeContext": {
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "exportedParameters": [
+          {
+            "fieldName": "RiskEventTypes",
+            "parameterName": "RiskEventTypes",
+            "parameterType": 1
+          },
+          {
+            "fieldName": "UserDisplayName",
+            "parameterName": "UserDisplayName",
+            "parameterType": 1
+          }
+        ],
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "policyCount",
+              "formatter": 5
+            },
+            {
+              "columnMatch": "TotalSum",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "orangeRed"
+              }
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "b2cpolicy",
+              "label": "B2C Policy Name"
+            },
+            {
+              "columnId": "policyCount"
+            },
+            {
+              "columnId": "TotalSum",
+              "label": "Total"
+            }
+          ]
+        },
+        "sortBy": [],
+        "tileSettings": {
+          "showBorder": false,
+          "titleContent": {
+            "columnMatch": "b2cpolicy",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "policyCount",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            },
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        },
+        "chartSettings": {
+          "yAxis": [
+            "TotalSum"
+          ]
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
+      "customWidth": "50",
+      "showPin": true,
+      "name": "query - 3 - Copy - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where RiskLevelDuringSignIn != \"none\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| extend RiskEvent = tolower(RiskEventTypes_V2)\n| summarize Total=count() by RiskEventTypes_V2\n| order by Total",
+        "size": 2,
+        "showAnalytics": true,
+        "title": "Total sign-in risk events by risk detections",
+        "timeContext": {
+          "durationMs": 20214000000
         },
         "timeContextFromParameter": "TimeRange",
         "showRefreshButton": true,
@@ -304,42 +931,52 @@
               }
             }
           ],
-          "filter": true
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "RiskEventTypes_V2",
+              "label": "Risk Types"
+            },
+            {
+              "columnId": "Total"
+            }
+          ]
         },
         "sortBy": []
       },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
       "customWidth": "50",
       "showPin": true,
-      "name": "query - 3"
+      "name": "query - 3",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| extend RiskEvent = tolower(RiskEventTypes_V2)\n| extend locationDetailsJSON = parse_json(LocationDetails)\n| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n| extend User = tolower(Identity)\n| summarize Total = count() by Latitude, Longitude, User\n| extend GeoCoordinatesMapLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",User)\n| project  Latitude, Longitude, GeoCoordinatesMapLink, Total\n| order by Total desc\n\n//| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n//| extend GeoCoordinatesLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",Identity)\n//| project TimeGenerated,  RiskEvent,  RiskLevelAggregated, UserId, Identity, IPAddress, Location,  Latitude, Longitude, BingMapLink=GeoCoordinatesLink",
-        "size": 0,
+        "query": "SigninLogs\n| where RiskLevelDuringSignIn != \"none\"\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| extend Browser = tostring(DeviceDetail.browser)\n| where Browser != \"\"\n| summarize Total = count() by Browser\n| order by Total",
+        "size": 1,
         "showAnalytics": true,
-        "title": "Risk Events - Geo Coordinates ",
+        "title": "Risky sign-ins by browser",
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 20214000000
         },
         "timeContextFromParameter": "TimeRange",
-        "exportedParameters": [
-          {
-            "fieldName": "RiskEventTypes",
-            "parameterName": "RiskEventTypes",
-            "parameterType": 1
-          },
-          {
-            "fieldName": "UserDisplayName",
-            "parameterName": "UserDisplayName",
-            "parameterType": 1
-          }
-        ],
+        "showRefreshButton": true,
+        "exportFieldName": "RiskEventTypes_V2",
+        "exportParameterName": "RiskEventTypes_V2Param",
+        "exportDefaultValue": "",
         "showExportToExcel": true,
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
-        "visualization": "table",
+        "visualization": "piechart",
         "gridSettings": {
           "formatters": [
             {
@@ -347,13 +984,6 @@
               "formatter": 8,
               "formatOptions": {
                 "palette": "coldHot"
-              }
-            },
-            {
-              "columnMatch": "GeoCoordinatesMapLink",
-              "formatter": 7,
-              "formatOptions": {
-                "linkTarget": "Url"
               }
             },
             {
@@ -369,23 +999,267 @@
           ],
           "filter": true
         },
-        "sortBy": []
+        "sortBy": [],
+        "tileSettings": {
+          "showBorder": false,
+          "titleContent": {
+            "columnMatch": "Browser",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "Total",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            },
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
       },
       "customWidth": "50",
       "showPin": true,
-      "name": "query - 3 - Copy"
+      "name": "query - 3 - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| extend RiskEvent = dynamic({RiskEventTypes_V2Param})\n| extend locationDetailsJSON = parse_json(LocationDetails)\n| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n| extend GeoCoordinatesLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",Identity)\n| project TimeGenerated,  RiskEvent,  RiskLevelAggregated, UserId, Identity, IPAddress, Location,  Latitude, Longitude, BingMapLink=GeoCoordinatesLink\n| order by TimeGenerated desc\n \n //Bing Map Documentation: https://docs.microsoft.com/en-us/bingmaps/articles/create-a-custom-map-url\n //sp=point.latitude_longitude_titleString_notesString_linkURL_photoURL\n",
-        "size": 3,
-        "title": "Risk Events - Filtered by Risk Event Type",
+        "query": "SigninLogs\n| where RiskLevelDuringSignIn != \"none\"\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| extend OperatingSystem = tostring(DeviceDetail.operatingSystem)\n| where OperatingSystem != \"\"\n| summarize Total = count() by OperatingSystem\n| order by Total",
+        "size": 1,
+        "showAnalytics": true,
+        "title": "Risky sign-ins by operating system",
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 20214000000
         },
         "timeContextFromParameter": "TimeRange",
+        "showRefreshButton": true,
+        "exportFieldName": "RiskEventTypes_V2",
+        "exportParameterName": "RiskEventTypes_V2Param",
+        "exportDefaultValue": "",
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "piechart",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Total",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "coldHot"
+              }
+            },
+            {
+              "columnMatch": "Count",
+              "formatter": 4,
+              "numberFormat": {
+                "unit": 17,
+                "options": {
+                  "style": "decimal"
+                }
+              }
+            }
+          ],
+          "filter": true
+        },
+        "sortBy": [],
+        "tileSettings": {
+          "showBorder": false,
+          "titleContent": {
+            "columnMatch": "Browser",
+            "formatter": 1
+          },
+          "leftContent": {
+            "columnMatch": "Total",
+            "formatter": 12,
+            "formatOptions": {
+              "palette": "auto"
+            },
+            "numberFormat": {
+              "unit": 17,
+              "options": {
+                "maximumSignificantDigits": 3,
+                "maximumFractionDigits": 2
+              }
+            }
+          }
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
+      "customWidth": "50",
+      "showPin": true,
+      "name": "query - 3 - Copy - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| project TimeGenerated, CorrelationId,  IPAddress, Location, UserDisplayName, RiskEventTypes_V2, RiskEventTypes, RiskDetail, RiskState, IsRisky, RiskLevelAggregated, UserId\n| summarize count() by bin(TimeGenerated,7d), RiskEventTypes\n| render timechart   ",
+        "size": 2,
+        "title": "Risky sign-ins by risk type over time",
+        "timeContext": {
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "overview"
+      },
+      "name": "query - 7",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where RiskLevelDuringSignIn != \"none\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| project RiskEventTypes_V2,RiskLevelDuringSignIn\n//| summarize Total=count() by RiskEventTypes_V2, RiskLevelDuringSignIn\n| evaluate pivot(RiskLevelDuringSignIn)\n//| order by high,medium,low",
+        "size": 0,
+        "title": "Total - Risky sign-ins by risk type and risk level",
+        "timeContext": {
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "exportFieldName": "RiskEventTypes_V2",
+        "exportParameterName": "RiskEventTypes_V2Param",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "high",
+              "formatter": 8,
+              "formatOptions": {
+                "max": 1,
+                "palette": "red"
+              }
+            },
+            {
+              "columnMatch": "low",
+              "formatter": 8,
+              "formatOptions": {
+                "max": 1,
+                "palette": "yellow"
+              }
+            },
+            {
+              "columnMatch": "medium",
+              "formatter": 8,
+              "formatOptions": {
+                "max": 1,
+                "palette": "orange",
+                "compositeBarSettings": {
+                  "labelText": "",
+                  "columnSettings": []
+                }
+              }
+            },
+            {
+              "columnMatch": "Total",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "orangeRed"
+              }
+            },
+            {
+              "columnMatch": "RiskEventStr",
+              "formatter": 1
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true,
+          "sortBy": [
+            {
+              "itemKey": "RiskEventTypes_V2",
+              "sortOrder": 1
+            }
+          ],
+          "labelSettings": [
+            {
+              "columnId": "RiskEventTypes_V2",
+              "label": "Detection type"
+            },
+            {
+              "columnId": "high",
+              "label": "High"
+            },
+            {
+              "columnId": "low",
+              "label": "Low"
+            },
+            {
+              "columnId": "medium",
+              "label": "Medium"
+            }
+          ]
+        },
+        "sortBy": [
+          {
+            "itemKey": "RiskEventTypes_V2",
+            "sortOrder": 1
+          }
+        ]
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "details"
+      },
+      "name": "query - 16",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where RiskLevelDuringSignIn in (split('{FilterBySignInRiskLevel}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| extend RiskEventStr = dynamic({RiskEventTypes_V2Param})\n| extend RiskEventTypes_V2Str = translate('\\r\\n ','',RiskEventTypes_V2) //Removing space and return characters from the risktypes so matching can be done with the parameter value.\n| where RiskEventTypes_V2Str == tostring(RiskEventStr)\n| extend locationDetailsJSON = parse_json(LocationDetails)\n| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n| extend GeoCoordinatesLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",Identity)\n| project TimeGenerated, RiskLevelDuringSignIn,RiskEventStr, UserId, Identity, IPAddress, Location,  Latitude, Longitude, BingMapLink=GeoCoordinatesLink, CorrelationId\n| order by TimeGenerated desc\n",
+        "size": 0,
+        "title": "Details - Risky sign-ins by risk type and risk level",
+        "timeContext": {
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "showRefreshButton": true,
+        "exportedParameters": [
+          {
+            "fieldName": "CorrelationId",
+            "parameterName": "CorrelationIdPrm",
+            "parameterType": 1
+          },
+          {
+            "fieldName": "Identity",
+            "parameterName": "IdentityPrm",
+            "parameterType": 1
+          }
+        ],
         "showExportToExcel": true,
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -393,7 +1267,11 @@
         "gridSettings": {
           "formatters": [
             {
-              "columnMatch": "RiskLevelAggregated",
+              "columnMatch": "TimeGenerated",
+              "formatter": 6
+            },
+            {
+              "columnMatch": "RiskLevelDuringSignIn",
               "formatter": 18,
               "formatOptions": {
                 "thresholdsOptions": "colors",
@@ -401,7 +1279,7 @@
                   {
                     "operator": "contains",
                     "thresholdValue": "high",
-                    "representation": "redDark",
+                    "representation": "red",
                     "text": "{0}{1}"
                   },
                   {
@@ -417,11 +1295,335 @@
                     "text": "{0}{1}"
                   },
                   {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": null,
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "RiskEvent",
+              "formatter": 1,
+              "formatOptions": {
+                "compositeBarSettings": {
+                  "labelText": "",
+                  "columnSettings": []
+                }
+              }
+            },
+            {
+              "columnMatch": "Identity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Person",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "IPAddress",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "View",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Location",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Globe",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "BingMapLink",
+              "formatter": 7,
+              "formatOptions": {
+                "linkTarget": "Url",
+                "linkLabel": "View in Bing Maps",
+                "linkIsContextBlade": false
+              }
+            },
+            {
+              "columnMatch": "RiskLevelAggregated",
+              "formatter": 5,
+              "numberFormat": {
+                "unit": 0,
+                "options": {
+                  "style": "decimal"
+                }
+              }
+            },
+            {
+              "columnMatch": "GeoCoordinatesLink",
+              "formatter": 7,
+              "formatOptions": {
+                "linkTarget": "Url",
+                "linkLabel": "View in Bing Maps"
+              }
+            },
+            {
+              "columnMatch": "Point",
+              "formatter": 7,
+              "formatOptions": {
+                "linkTarget": "Url"
+              }
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "TimeGenerated"
+            },
+            {
+              "columnId": "RiskLevelDuringSignIn",
+              "label": "SignIn Risk"
+            },
+            {
+              "columnId": "RiskEventStr",
+              "label": "Risk Type"
+            },
+            {
+              "columnId": "UserId"
+            },
+            {
+              "columnId": "Identity"
+            },
+            {
+              "columnId": "IPAddress"
+            },
+            {
+              "columnId": "Location"
+            },
+            {
+              "columnId": "Latitude"
+            },
+            {
+              "columnId": "Longitude"
+            },
+            {
+              "columnId": "BingMapLink",
+              "label": "Map"
+            }
+          ]
+        },
+        "sortBy": []
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "details"
+      },
+      "name": "Risk Events - Filtered by Risk Event Type",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where RiskLevelAggregated != \"none\"\n| where RiskState == \"atRisk\"\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| project Identity, UserId, TimeGenerated, UserPrincipalName, RiskLevelAggregated\n| summarize RiskHistoryTotal = count() by Identity, SignInIdentifier=UserPrincipalName, UserId\n| order by RiskHistoryTotal\n//| summarize RiskHistoryTotal = count() by Identity, UserId, SignInIdentifier, RiskLevelAggregated",
+        "size": 0,
+        "showAnalytics": true,
+        "title": "Risky users",
+        "timeContext": {
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "exportFieldName": "UserId",
+        "exportParameterName": "UserIdParam",
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Identity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Person",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "SignInIdentifier",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Mail",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "UserId",
+              "formatter": 1
+            },
+            {
+              "columnMatch": "RiskHistoryTotal",
+              "formatter": 5
+            },
+            {
+              "columnMatch": "UserPrincipalName",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Mail",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "RiskLevelAggregated",
+              "formatter": 5,
+              "numberFormat": {
+                "unit": 0,
+                "options": {
+                  "style": "decimal"
+                }
+              }
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "riskyusers"
+      },
+      "customWidth": "100",
+      "showPin": true,
+      "name": "query - 0",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| where RiskLevelAggregated != \"none\"\n| where RiskEventTypes_V2 != \"[]\"\n| where RiskState == \"atRisk\"\n| where UserId == '{UserIdParam}'\n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| where Location in (split('{FilterByCountry}',\",\")) \n| extend RiskState=iff(RiskState==\"atRisk\", \"At Risk\", \"N/A\")\n| extend Browser = tostring(DeviceDetail.browser)\n| where Browser != \"\"\n| extend OS = tostring(DeviceDetail.operatingSystem)\n| where OS != \"\"\n| extend locationDetailsJSON = parse_json(LocationDetails)\n| extend Latitude=tostring(locationDetailsJSON.geoCoordinates.latitude), Longitude=tostring(locationDetailsJSON.geoCoordinates.longitude)\n| extend GeoCoordinatesLink = strcat(\"https://bing.com/maps/default.aspx?cp=\",Latitude,\"~\",Longitude,\"&style=h&lvl=15&sp=\",\"point.\",Latitude,\"_\",Longitude,\"_\",Identity)\n| distinct TimeGenerated,Identity, RiskState, RiskLevelAggregated, RiskLevelDuringSignIn, RiskEventTypes_V2, Location, IPAddress, Latitude, Longitude , GeoCoordinatesLink, Browser,OS, CorrelationId\n| order by TimeGenerated \n\n",
+        "size": 0,
+        "showAnalytics": true,
+        "title": "Users' risk detections",
+        "timeContext": {
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "exportedParameters": [
+          {
+            "fieldName": "CorrelationId",
+            "parameterName": "CorrelationIdPrm",
+            "parameterType": 1
+          },
+          {
+            "fieldName": "Identity",
+            "parameterName": "IdentityPrm",
+            "parameterType": 1
+          }
+        ],
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "TimeGenerated",
+              "formatter": 6
+            },
+            {
+              "columnMatch": "Identity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Person",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "RiskState",
+              "formatter": 5
+            },
+            {
+              "columnMatch": "RiskLevelAggregated",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "medium",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "low",
+                    "representation": "info",
                     "text": "{0}{1}"
                   },
                   {
                     "operator": "Default",
                     "thresholdValue": null,
+                    "representation": "success",
                     "text": "{0}{1}"
                   }
                 ]
@@ -434,49 +1636,636 @@
               }
             },
             {
-              "columnMatch": "BingMapLink",
-              "formatter": 7,
+              "columnMatch": "RiskLevelDuringSignIn",
+              "formatter": 18,
               "formatOptions": {
-                "linkTarget": "Url",
-                "linkIsContextBlade": false
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "medium",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "info",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Location",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Globe",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "IPAddress",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "View",
+                    "text": "{0}{1}"
+                  }
+                ]
               }
             },
             {
               "columnMatch": "GeoCoordinatesLink",
               "formatter": 7,
               "formatOptions": {
-                "linkTarget": "Url"
+                "linkColumn": "GeoCoordinatesLink",
+                "linkTarget": "Url",
+                "linkLabel": "View in Bing Maps"
               }
             },
             {
-              "columnMatch": "Point",
-              "formatter": 7,
-              "formatOptions": {
-                "linkTarget": "Url"
-              }
+              "columnMatch": "Browser",
+              "formatter": 1
             }
           ],
-          "filter": true
-        },
-        "sortBy": []
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "TimeGenerated"
+            },
+            {
+              "columnId": "Identity"
+            },
+            {
+              "columnId": "RiskState"
+            },
+            {
+              "columnId": "RiskLevelAggregated",
+              "label": "User Risk"
+            },
+            {
+              "columnId": "RiskLevelDuringSignIn",
+              "label": "SignIn Risk"
+            },
+            {
+              "columnId": "RiskEventTypes_V2",
+              "label": "Risk Type"
+            },
+            {
+              "columnId": "Location"
+            },
+            {
+              "columnId": "IPAddress"
+            },
+            {
+              "columnId": "Latitude"
+            },
+            {
+              "columnId": "Longitude"
+            },
+            {
+              "columnId": "GeoCoordinatesLink",
+              "label": "Map"
+            },
+            {
+              "columnId": "Browser"
+            },
+            {
+              "columnId": "OS"
+            }
+          ]
+        }
       },
-      "name": "Risk Events - Filtered by Risk Event Type"
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "riskyusers"
+      },
+      "customWidth": "100",
+      "showPin": true,
+      "name": "query - 0 - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
     },
     {
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\n| where RiskState == \"atRisk\" \n| where IPAddress !in (split('{FilterByIPAddress}',\",\"))\n| project TimeGenerated, CorrelationId,  IPAddress, Location, UserDisplayName, RiskEventTypes_V2, RiskEventTypes, RiskDetail, RiskState, IsRisky, RiskLevelAggregated, UserId\n| summarize count() by bin(TimeGenerated,7d), RiskEventTypes\n| render timechart   ",
-        "size": 3,
-        "title": "Risk Events Over Time",
+        "query": "let getValueByKey = (data: string, key: string) { \n    let helper = (data: string, key: string) {\n        let indexStart = indexof(data, key);\n        let endString = '\"';\n        let sub = substring(data, indexStart + strlen(key) + 11); //removing \"value\":\" 11 is the length\n        let indexEnd = indexof(sub, endString);\n        let value = substring(sub, 0, indexEnd);\n        value;\n    };\n    let endString = '\"';\n    let condtion  = data contains key;\n    iff(condtion, helper(data, key), \"N/A\");\n};\nAuditLogs\n//| extend B2CPolicy = getValueByKey(tostring(AdditionalDetails), \"PolicyId\")\n//| extend AppliedCAPolicies= getValueByKey(tostring(AdditionalDetails), \"AppliedPolicies\")\n//| where AppliedCAPolicies != \"N/A\" // and AppliedCAPolicies != \"\"\n//| extend AppliedCAPoliciesRefined = trim(\",\", replace_string(AppliedCAPolicies, \", PolicyApplies;\", \",\")) //Replace the keyword \", PolicyApplies;\" with \",\" and then remove the last \",\" by using trim()\n//| extend AppliedCAPoliciesArr = todynamic(split(AppliedCAPoliciesRefined, \";\"))\n//| project ConditionalAccessPolicy=split(AppliedCAPoliciesRefined, ',')\n| extend Details = case(OperationName has \"phone\", getValueByKey(tostring(AdditionalDetails), \"PhoneNumber\"), \n    OperationName has \"sms\", getValueByKey(tostring(AdditionalDetails), \"PhoneNumber\"), \n    OperationName has \"Remediate\", getValueByKey(tostring(AdditionalDetails), \"CompletedActions\"), \n    OperationName has \"Send verification email\", getValueByKey(tostring(AdditionalDetails), \"EmailAddress\"), \n    OperationName has \"Evaluate conditional access policies\", trim(\",\", replace_string(getValueByKey(tostring(AdditionalDetails), \"AppliedPolicies\"), \", PolicyApplies;\", \",\")), ////Replace the keyword \", PolicyApplies;\" with \",\" and then remove the last \",\" by using trim()\n    \"\") // Last value is the default case\n| extend Details = iff(Details ==\"\", \"No additional details\", Details)\n| where CorrelationId == '{CorrelationIdPrm}'\n| extend Identity = '{IdentityPrm}'\n| project TimeGenerated, Identity, OperationName, Details,Result, CorrelationId\n| order by TimeGenerated \n",
+        "size": 0,
+        "showAnalytics": true,
+        "title": "Risk detection details",
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 20214000000
         },
         "timeContextFromParameter": "TimeRange",
+        "showExportToExcel": true,
         "queryType": 0,
-        "resourceType": "microsoft.operationalinsights/workspaces"
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "TimeGenerated",
+              "formatter": 6
+            },
+            {
+              "columnMatch": "Identity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Person",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "OperationName",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Normal",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Details",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "No additional details",
+                    "representation": "1",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "AllServices",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Result",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "failure",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "clientError",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "info",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "RiskState",
+              "formatter": 5
+            },
+            {
+              "columnMatch": "RiskLevelAggregated",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "medium",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "low",
+                    "representation": "info",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  }
+                ]
+              },
+              "numberFormat": {
+                "unit": 0,
+                "options": {
+                  "style": "decimal"
+                }
+              }
+            },
+            {
+              "columnMatch": "RiskLevelDuringSignIn",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "medium",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "info",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Location",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Globe",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "IPAddress",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "View",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "GeoCoordinatesLink",
+              "formatter": 7,
+              "formatOptions": {
+                "linkColumn": "GeoCoordinatesLink",
+                "linkTarget": "Url",
+                "linkLabel": "View in Bing Maps"
+              }
+            },
+            {
+              "columnMatch": "Browser",
+              "formatter": 1
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "TimeGenerated"
+            }
+          ]
+        }
       },
-      "name": "query - 7"
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "riskyusers"
+      },
+      "customWidth": "100",
+      "showPin": true,
+      "name": "query - 0 - Copy - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "let getValueByKey = (data: string, key: string) { \n    let helper = (data: string, key: string) {\n        let indexStart = indexof(data, key);\n        let endString = '\"';\n        let sub = substring(data, indexStart + strlen(key) + 11); //removing \"value\":\" 11 is the length\n        let indexEnd = indexof(sub, endString);\n        let value = substring(sub, 0, indexEnd);\n        value;\n    };\n    let endString = '\"';\n    let condtion  = data contains key;\n    iff(condtion, helper(data, key), \"N/A\");\n};\nAuditLogs\n//| extend B2CPolicy = getValueByKey(tostring(AdditionalDetails), \"PolicyId\")\n//| extend AppliedCAPolicies= getValueByKey(tostring(AdditionalDetails), \"AppliedPolicies\")\n//| where AppliedCAPolicies != \"N/A\" // and AppliedCAPolicies != \"\"\n//| extend AppliedCAPoliciesRefined = trim(\",\", replace_string(AppliedCAPolicies, \", PolicyApplies;\", \",\")) //Replace the keyword \", PolicyApplies;\" with \",\" and then remove the last \",\" by using trim()\n//| extend AppliedCAPoliciesArr = todynamic(split(AppliedCAPoliciesRefined, \";\"))\n//| project ConditionalAccessPolicy=split(AppliedCAPoliciesRefined, ',')\n| extend Details = case(OperationName has \"phone\", getValueByKey(tostring(AdditionalDetails), \"PhoneNumber\"), \n    OperationName has \"sms\", getValueByKey(tostring(AdditionalDetails), \"PhoneNumber\"), \n    OperationName has \"Remediate\", getValueByKey(tostring(AdditionalDetails), \"CompletedActions\"), \n    OperationName has \"Send verification email\", getValueByKey(tostring(AdditionalDetails), \"EmailAddress\"), \n    OperationName has \"Evaluate conditional access policies\", trim(\",\", replace_string(getValueByKey(tostring(AdditionalDetails), \"AppliedPolicies\"), \", PolicyApplies;\", \",\")), ////Replace the keyword \", PolicyApplies;\" with \",\" and then remove the last \",\" by using trim()\n    \"\") // Last value is the default case\n| extend Details = iff(Details ==\"\", \"No additional details\", Details)\n| where CorrelationId == '{CorrelationIdPrm}'\n| extend Identity = '{IdentityPrm}'\n| project TimeGenerated, Identity, OperationName, Details,Result, CorrelationId\n| order by TimeGenerated \n",
+        "size": 0,
+        "showAnalytics": true,
+        "title": "Risk detection details",
+        "timeContext": {
+          "durationMs": 20214000000
+        },
+        "timeContextFromParameter": "TimeRange",
+        "showExportToExcel": true,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "TimeGenerated",
+              "formatter": 6
+            },
+            {
+              "columnMatch": "Identity",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Person",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "OperationName",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Normal",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Details",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "No additional details",
+                    "representation": "1",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "AllServices",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Result",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "success",
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "failure",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "clientError",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "info",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "RiskState",
+              "formatter": 5
+            },
+            {
+              "columnMatch": "RiskLevelAggregated",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "medium",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "low",
+                    "representation": "info",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  }
+                ]
+              },
+              "numberFormat": {
+                "unit": 0,
+                "options": {
+                  "style": "decimal"
+                }
+              }
+            },
+            {
+              "columnMatch": "RiskLevelDuringSignIn",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "3",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "medium",
+                    "representation": "2",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "contains",
+                    "thresholdValue": "high",
+                    "representation": "info",
+                    "text": "{0}{1}"
+                  },
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "success",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "Location",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "Globe",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "IPAddress",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
+                  {
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "View",
+                    "text": "{0}{1}"
+                  }
+                ]
+              }
+            },
+            {
+              "columnMatch": "GeoCoordinatesLink",
+              "formatter": 7,
+              "formatOptions": {
+                "linkColumn": "GeoCoordinatesLink",
+                "linkTarget": "Url",
+                "linkLabel": "View in Bing Maps"
+              }
+            },
+            {
+              "columnMatch": "Browser",
+              "formatter": 1
+            }
+          ],
+          "rowLimit": 10000,
+          "filter": true,
+          "labelSettings": [
+            {
+              "columnId": "TimeGenerated"
+            }
+          ]
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "details"
+      },
+      "customWidth": "100",
+      "showPin": true,
+      "name": "query - 0 - Copy - Copy - Copy",
+      "styleSettings": {
+        "showBorder": true
+      }
     }
   ],
   "fallbackResourceIds": [
