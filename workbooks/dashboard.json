@@ -103,12 +103,12 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\r\n|where TimeGenerated > ago(90d)\r\n|extend OS= DeviceDetail.operatingSystem\r\n|extend Browser =extract(\"([a-zA-Z]+)\",1,tostring(DeviceDetail.browser))\r\n|where OS!=\"\"\r\n|where Browser !=\"\"\r\n|where AppDisplayName !=\"\"\r\n|summarize OperatingSystem = dcount(UserId) by tostring(OS)\r\n|sort by OS desc\r\n|render columnchart   \r\n",
+        "query": "SigninLogs\r\n|extend OS= DeviceDetail.operatingSystem\r\n|extend Browser =extract(\"([a-zA-Z]+)\",1,tostring(DeviceDetail.browser))\r\n|where OS!=\"\"\r\n|where Browser !=\"\"\r\n|where AppDisplayName !=\"\"\r\n|summarize OperatingSystem = dcount(UserId) by tostring(OS)\r\n|sort by OS desc\r\n|render columnchart   \r\n",
         "size": 1,
         "showAnalytics": true,
         "title": "Platform",
         "timeContext": {
-          "durationMs": 7776000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -130,12 +130,12 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\n|where TimeGenerated > ago(90d)\n|extend OS= DeviceDetail.operatingSystem\n|extend Browser =extract(\"([a-zA-Z]+)\",1,tostring(DeviceDetail.browser))\n|where OS!=\"\"\n|where Browser !=\"\"\n|where AppDisplayName !=\"\"\n|summarize Browsers = count() by Browser\n|render columnchart \n",
+        "query": "SigninLogs\n|extend OS= DeviceDetail.operatingSystem\n|extend Browser =extract(\"([a-zA-Z]+)\",1,tostring(DeviceDetail.browser))\n|where OS!=\"\"\n|where Browser !=\"\"\n|where AppDisplayName !=\"\"\n|summarize Browsers = count() by Browser\n|render columnchart \n",
         "size": 1,
         "showAnalytics": true,
         "title": "Browser",
         "timeContext": {
-          "durationMs": 7776000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -174,11 +174,11 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "SigninLogs\n| where TimeGenerated > ago(180d)\n| where AppDisplayName !=\"\"\n| where Location != \"\"\n| summarize signInCount = count() by Location\n| render columnchart  \n",
+        "query": "SigninLogs\n| where AppDisplayName !=\"\"\n| where Location != \"\"\n| summarize signInCount = count() by Location\n| render columnchart  \n",
         "size": 0,
         "title": "Location",
         "timeContext": {
-          "durationMs": 7776000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -205,7 +205,57 @@
         "comparison": "isEqualTo",
         "value": "DataType"
       },
+      "customWidth": "50",
       "name": "query - 8"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "SigninLogs\n| extend User = tolower(Identity)\n| project IPAddress, User\n| summarize Total = count() by IPAddress,User\n| order by Total desc\n",
+        "size": 0,
+        "title": "Location",
+        "timeContext": {
+          "durationMs": 0
+        },
+        "timeContextFromParameter": "TimeRange",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
+            {
+              "columnMatch": "Total",
+              "formatter": 8,
+              "formatOptions": {
+                "palette": "purpleBlueGreen"
+              }
+            }
+          ]
+        },
+        "mapSettings": {
+          "locInfo": "CountryRegion",
+          "locInfoColumn": "Location",
+          "sizeSettings": "signInCount",
+          "sizeAggregation": "Sum",
+          "labelSettings": "Location",
+          "legendMetric": "signInCount",
+          "legendAggregation": "Sum",
+          "itemColorSettings": {
+            "nodeColorField": "signInCount",
+            "colorAggregation": "Sum",
+            "type": "heatmap",
+            "heatmapPalette": "greenRed"
+          }
+        }
+      },
+      "conditionalVisibility": {
+        "parameterName": "selectedTab",
+        "comparison": "isEqualTo",
+        "value": "DataType"
+      },
+      "customWidth": "50",
+      "name": "query - 8 - Copy"
     },
     {
       "type": 3,
@@ -216,7 +266,7 @@
         "showAnalytics": true,
         "title": "Authentications Per Application",
         "timeContext": {
-          "durationMs": 7776000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -277,12 +327,12 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "let GetIdPType = (IdPName:string) { iff(IdPName == \"LocalAccountUsername\",\"LocalAccount\",\"Federated\")};\nlet GetIdPValue = (IdPName:string,IdpName:string) { iff(IdPName == \"LocalAccountUsername\",\"Local\",IdpName)};\nAuditLogs\n    | where OperationName == \"Validate local account credentials\"\n      or OperationName == \"Federate with an identity provider\"\n    | project OperationName, Result, IdpType=GetIdPValue(extractjson(\"$.[4].key\",tostring(AdditionalDetails)),extractjson(\"$.[4].value\",tostring(AdditionalDetails)))\n    | where IdpType != \"N/A\"\n    | summarize Count =count() by IdentityProvider=IdpType\n    | render barchart    \n",
+        "query": "let GetIdPType = (IdPName:string) { iff(IdPName == \"LocalAccountUsername\",\"LocalAccount\",\"Federated\")};\nlet GetIdPValue = (IdPName:string,IdpName:string) { iff(IdPName == \"LocalAccountUsername\",\"Local\",IdpName)};\nAuditLogs\n    | where OperationName == \"Validate local account credentials\"\n      or OperationName == \"Federate with an identity provider\"\n    | project OperationName, Result, IdpType=GetIdPValue(extractjson(\"$.[4].key\",tostring(AdditionalDetails)),extractjson(\"$.[4].value\",tostring(AdditionalDetails)))\n    | where IdpType != \"N/A\"\n    | summarize Count =count() by IdentityProvider=IdpType\n    | order by Count   \n",
         "size": 0,
         "showAnalytics": true,
         "title": "Authentications Per Identity Provider",
         "timeContext": {
-          "durationMs": 7776000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -557,7 +607,7 @@
         "title": "Failed Sign-Ins (Timechart)",
         "color": "orange",
         "timeContext": {
-          "durationMs": 7776000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -588,6 +638,9 @@
       },
       "name": "query - 10"
     }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/b0e2eadb-68a3-451b-b8e3-4681b9a8368f/resourceGroups/az-woodgrove-rg/providers/Microsoft.OperationalInsights/workspaces/azb2c-woodgrove-logs"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
