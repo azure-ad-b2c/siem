@@ -108,7 +108,7 @@
         "showAnalytics": true,
         "title": "Platform",
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 7776000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -135,7 +135,7 @@
         "showAnalytics": true,
         "title": "Browser",
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 7776000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -178,7 +178,7 @@
         "size": 0,
         "title": "Location",
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 7776000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -214,7 +214,7 @@
         "version": "KqlItem/1.0",
         "query": "SigninLogs\n| extend User = tolower(Identity)\n| project IPAddress, User\n| summarize Total = count() by IPAddress,User\n| order by Total desc\n",
         "size": 0,
-        "title": "Location",
+        "title": "IP Address",
         "timeContext": {
           "durationMs": 0
         },
@@ -231,7 +231,8 @@
                 "palette": "purpleBlueGreen"
               }
             }
-          ]
+          ],
+          "rowLimit": 10000
         },
         "mapSettings": {
           "locInfo": "CountryRegion",
@@ -266,7 +267,7 @@
         "showAnalytics": true,
         "title": "Authentications Per Application",
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 7776000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -332,7 +333,7 @@
         "showAnalytics": true,
         "title": "Authentications Per Identity Provider",
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 7776000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -607,7 +608,7 @@
         "title": "Failed Sign-Ins (Timechart)",
         "color": "orange",
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 7776000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
