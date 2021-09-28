@@ -82,6 +82,7 @@
             "type": 1,
             "description": "Identifies the app using one of the formats described in the document: https://docs.microsoft.com/en-us/azure/azure-monitor/logs/app-expression#arguments",
             "isRequired": true,
+            "value": "",
             "timeContext": {
               "durationMs": 86400000
             }
@@ -110,7 +111,7 @@
         "query": "\n///////////////////////\n// Abandon Journeys\n///////////////////////\nlet policy_Id= '{Policy:value}'; \nlet journeyEmpty = (journeyName:string) { iif(journeyName == \"\", \"Journey Not Finished\",journeyName) };\nlet journeyCount =  (journeyName:string) { journeyName };\nlet journey =  (journeyName:string) { app(\"{AppInsightsId:value}\").customEvents \n                                        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n                                        | extend Policy_ = tostring(customDimensions.Policy)\n                                        | where Policy_ == policy_Id\n                                        | where name == journeyName\n                                        | project CorrelationId_, Policy_, name, timestamp\n                                        };\njourney(\"JourneyStarted\") \n| \n    join kind=fullouter         (journey(\"JourneyCompleted\") \n          | project _policy_Id=policy_Id, _name=name, CorrelationId_ )\n    on $left.CorrelationId_ == $right.CorrelationId_\n    | where _name == \"\"\n    | project Started=name,Finished=journeyEmpty(_name), timestamp, policy_Id, CorrelationId=CorrelationId_\n    | take 250 //Default limit for workbook\n   ",
         "size": 4,
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "exportFieldName": "CorrelationId",
@@ -177,10 +178,10 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "app(\"app-insights-b2c\").customEvents  \n        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n        | extend Policy_ = tostring(customDimensions.Policy)\n        | where CorrelationId_ ==  '{CorrelationId}' \n        | project CorrelationId_, Policy_, name, timestamp\n        | order by timestamp desc",
+        "query": "app(\"{AppInsightsId:value}\").customEvents  \n        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n        | extend Policy_ = tostring(customDimensions.Policy)\n        | where CorrelationId_ ==  '{CorrelationId}' \n        | project CorrelationId_, Policy_, name, timestamp\n        | order by timestamp desc",
         "size": 4,
         "timeContext": {
-          "durationMs": 5184000000
+          "durationMs": 0
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
