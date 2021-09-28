@@ -17,7 +17,9 @@
             "id": "55f2a818-f152-4dd1-9d59-c363aac9072e",
             "version": "KqlParameterItem/1.0",
             "name": "TimeRange",
+            "label": "Time Range",
             "type": 4,
+            "isRequired": true,
             "typeSettings": {
               "selectableValues": [
                 {
@@ -76,12 +78,23 @@
             "id": "cf9c0808-2ca8-4c82-9254-74cc250c3267",
             "version": "KqlParameterItem/1.0",
             "name": "AppInsightsId",
+            "label": "Application Insights Identifier",
             "type": 1,
+            "description": "Identifies the app using one of the formats described in the document: https://docs.microsoft.com/en-us/azure/azure-monitor/logs/app-expression#arguments",
             "isRequired": true,
-            "value": "",
             "timeContext": {
               "durationMs": 86400000
             }
+          },
+          {
+            "id": "6180349e-8221-4446-8af8-09dac9962c57",
+            "version": "KqlParameterItem/1.0",
+            "name": "Policy",
+            "label": "Azure AD B2C Policy",
+            "type": 1,
+            "description": "Azure AD B2C Policy (e.g. B2C_1A_SUSI)",
+            "isRequired": true,
+            "value": ""
           }
         ],
         "style": "pills",
@@ -94,10 +107,10 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "\n///////////////////////\n// Abandon Journeys\n///////////////////////\nlet policy_Id=\"B2C_1A_Signup_Signin_AppInsights\";\nlet journeyEmpty = (journeyName:string) { iif(journeyName == \"\", \"Journey Not Finished\",journeyName) };\nlet journeyCount =  (journeyName:string) { journeyName };\nlet journey =  (journeyName:string) { app(\"{AppInsightsId:value}\").customEvents  | where timestamp > ago(180d)\n                                        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n                                        | extend Policy_ = tostring(customDimensions.Policy)\n                                        | where Policy_ == policy_Id\n                                        | where name == journeyName\n                                        | project CorrelationId_, Policy_, name, timestamp\n                                        };\njourney(\"JourneyStarted\") \n| \n    join kind=fullouter         (journey(\"JourneyCompleted\") \n          | project _policy_Id=policy_Id, _name=name, CorrelationId_ )\n    on $left.CorrelationId_ == $right.CorrelationId_\n    | where _name == \"\"\n    | project Started=name,Finished=journeyEmpty(_name), timestamp, policy_Id, CorrelationId=CorrelationId_\n    | take 250 //Default limit for workbook\n   ",
+        "query": "\n///////////////////////\n// Abandon Journeys\n///////////////////////\nlet policy_Id= '{Policy:value}'; \nlet journeyEmpty = (journeyName:string) { iif(journeyName == \"\", \"Journey Not Finished\",journeyName) };\nlet journeyCount =  (journeyName:string) { journeyName };\nlet journey =  (journeyName:string) { app(\"{AppInsightsId:value}\").customEvents \n                                        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n                                        | extend Policy_ = tostring(customDimensions.Policy)\n                                        | where Policy_ == policy_Id\n                                        | where name == journeyName\n                                        | project CorrelationId_, Policy_, name, timestamp\n                                        };\njourney(\"JourneyStarted\") \n| \n    join kind=fullouter         (journey(\"JourneyCompleted\") \n          | project _policy_Id=policy_Id, _name=name, CorrelationId_ )\n    on $left.CorrelationId_ == $right.CorrelationId_\n    | where _name == \"\"\n    | project Started=name,Finished=journeyEmpty(_name), timestamp, policy_Id, CorrelationId=CorrelationId_\n    | take 250 //Default limit for workbook\n   ",
         "size": 4,
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 5184000000
         },
         "timeContextFromParameter": "TimeRange",
         "exportFieldName": "CorrelationId",
@@ -167,7 +180,7 @@
         "query": "app(\"app-insights-b2c\").customEvents  \n        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\n        | extend Policy_ = tostring(customDimensions.Policy)\n        | where CorrelationId_ ==  '{CorrelationId}' \n        | project CorrelationId_, Policy_, name, timestamp\n        | order by timestamp desc",
         "size": 4,
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 5184000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -203,7 +216,7 @@
         "query": "\nSigninLogs\n    | where CorrelationId == '{CorrelationId}'\n    | project  TimeGenerated, UserPrincipalName, CorrelationId, ClientAppUsed, AppDisplayName, ResultDescription, ResultType, tostring( DeviceDetail), IPAddress\n    | order by TimeGenerated desc\n\n",
         "size": 1,
         "timeContext": {
-          "durationMs": 0
+          "durationMs": 5184000000
         },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
@@ -229,6 +242,9 @@
       },
       "name": "query - 4"
     }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/b0e2eadb-68a3-451b-b8e3-4681b9a8368f/resourceGroups/az-woodgrove-rg/providers/Microsoft.OperationalInsights/workspaces/azb2c-woodgrove-logs"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
