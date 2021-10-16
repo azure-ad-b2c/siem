@@ -1,189 +1,192 @@
 {
-    "version": "Notebook/1.0",
-    "items": [
-      {
-        "type": 1,
-        "content": {
-          "json": "## Search By CorrelationId\n### This workbook search across Sign-In and Audit Logs."
-        },
-        "name": "text - 2"
+  "version": "Notebook/1.0",
+  "items": [
+    {
+      "type": 1,
+      "content": {
+        "json": "## Search By CorrelationId\n### This workbook search across Sign-In and Audit Logs."
       },
-      {
-        "type": 9,
-        "content": {
-          "version": "KqlParameterItem/1.0",
-          "parameters": [
+      "name": "text - 2"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "1e3f3d04-9fa7-456a-b633-5d022641407e",
+            "version": "KqlParameterItem/1.0",
+            "name": "TimeRange",
+            "label": "Time Range",
+            "type": 4,
+            "value": {
+              "durationMs": 5184000000
+            },
+            "typeSettings": {
+              "selectableValues": [
+                {
+                  "durationMs": 300000
+                },
+                {
+                  "durationMs": 900000
+                },
+                {
+                  "durationMs": 1800000
+                },
+                {
+                  "durationMs": 3600000
+                },
+                {
+                  "durationMs": 14400000
+                },
+                {
+                  "durationMs": 43200000
+                },
+                {
+                  "durationMs": 86400000
+                },
+                {
+                  "durationMs": 172800000
+                },
+                {
+                  "durationMs": 259200000
+                },
+                {
+                  "durationMs": 604800000
+                },
+                {
+                  "durationMs": 1209600000
+                },
+                {
+                  "durationMs": 2419200000
+                },
+                {
+                  "durationMs": 2592000000
+                },
+                {
+                  "durationMs": 5184000000
+                },
+                {
+                  "durationMs": 7776000000
+                }
+              ],
+              "allowCustom": true
+            },
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "pills",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 6"
+    },
+    {
+      "type": 9,
+      "content": {
+        "version": "KqlParameterItem/1.0",
+        "parameters": [
+          {
+            "id": "4c2986e2-8e84-4d50-a8a2-fba53536f99c",
+            "version": "KqlParameterItem/1.0",
+            "name": "__CorrelationId",
+            "label": "CorrelationId",
+            "type": 1,
+            "value": "",
+            "timeContext": {
+              "durationMs": 86400000
+            }
+          }
+        ],
+        "style": "formHorizontal",
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "parameters - 3",
+      "styleSettings": {
+        "margin": "0px"
+      }
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Results from Sign-In logs"
+      },
+      "name": "text - 5"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "\nSigninLogs\n    | where TimeGenerated > ago(180d)\n    | where CorrelationId == '{__CorrelationId}'\n    | project  TimeGenerated, UserPrincipalName, CorrelationId, ClientAppUsed, AppDisplayName, ResultDescription, ResultType, tostring( DeviceDetail), IPAddress\n    | order by TimeGenerated desc",
+        "size": 4,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces"
+      },
+      "name": "query - 2"
+    },
+    {
+      "type": 1,
+      "content": {
+        "json": "### Results from Audit-In logs"
+      },
+      "name": "text - 6"
+    },
+    {
+      "type": 3,
+      "content": {
+        "version": "KqlItem/1.0",
+        "query": "AuditLogs\n   | where TimeGenerated > ago(180d) \n   | where CorrelationId  == '{__CorrelationId}'\n   | project CorrelationId,TimeGenerated, Result, tostring(TargetResources), tostring(AdditionalDetails), OperationName\n   | order by TimeGenerated desc \n\n//CorrelationId for Error : 413de74f-a7e5-46c5-9fad-fdfaad4fa631'\t",
+        "size": 1,
+        "queryType": 0,
+        "resourceType": "microsoft.operationalinsights/workspaces",
+        "visualization": "table",
+        "gridSettings": {
+          "formatters": [
             {
-              "id": "1e3f3d04-9fa7-456a-b633-5d022641407e",
-              "version": "KqlParameterItem/1.0",
-              "name": "TimeRange",
-              "label": "Time Range",
-              "type": 4,
-              "value": {
-                "durationMs": 5184000000
-              },
-              "typeSettings": {
-                "selectableValues": [
+              "columnMatch": "Result",
+              "formatter": 18,
+              "formatOptions": {
+                "thresholdsOptions": "icons",
+                "thresholdsGrid": [
                   {
-                    "durationMs": 300000
+                    "operator": "==",
+                    "thresholdValue": "success",
+                    "representation": "success",
+                    "text": "{0}{1}"
                   },
                   {
-                    "durationMs": 900000
+                    "operator": "!=",
+                    "thresholdValue": "sucsess",
+                    "representation": "error",
+                    "text": "{0}{1}"
                   },
                   {
-                    "durationMs": 1800000
-                  },
-                  {
-                    "durationMs": 3600000
-                  },
-                  {
-                    "durationMs": 14400000
-                  },
-                  {
-                    "durationMs": 43200000
-                  },
-                  {
-                    "durationMs": 86400000
-                  },
-                  {
-                    "durationMs": 172800000
-                  },
-                  {
-                    "durationMs": 259200000
-                  },
-                  {
-                    "durationMs": 604800000
-                  },
-                  {
-                    "durationMs": 1209600000
-                  },
-                  {
-                    "durationMs": 2419200000
-                  },
-                  {
-                    "durationMs": 2592000000
-                  },
-                  {
-                    "durationMs": 5184000000
-                  },
-                  {
-                    "durationMs": 7776000000
+                    "operator": "Default",
+                    "thresholdValue": null,
+                    "representation": "more",
+                    "text": "{0}{1}"
                   }
-                ],
-                "allowCustom": true
-              },
-              "timeContext": {
-                "durationMs": 86400000
+                ]
               }
             }
-          ],
-          "style": "pills",
-          "queryType": 0,
-          "resourceType": "microsoft.operationalinsights/workspaces"
+          ]
         },
-        "name": "parameters - 6"
-      },
-      {
-        "type": 9,
-        "content": {
-          "version": "KqlParameterItem/1.0",
-          "parameters": [
-            {
-              "id": "4c2986e2-8e84-4d50-a8a2-fba53536f99c",
-              "version": "KqlParameterItem/1.0",
-              "name": "__CorrelationId",
-              "label": "CorrelationId",
-              "type": 1,
-              "value": "48763e44-98fb-4982-a96b-a8162a043885",
-              "timeContext": {
-                "durationMs": 86400000
-              }
-            }
-          ],
-          "style": "formHorizontal",
-          "queryType": 0,
-          "resourceType": "microsoft.operationalinsights/workspaces"
-        },
-        "name": "parameters - 3",
-        "styleSettings": {
-          "margin": "0px"
+        "tileSettings": {
+          "titleContent": {
+            "columnMatch": "Result",
+            "formatter": 11
+          },
+          "showBorder": false
         }
       },
-      {
-        "type": 1,
-        "content": {
-          "json": "### Results from Sign-In logs"
-        },
-        "name": "text - 5"
-      },
-      {
-        "type": 3,
-        "content": {
-          "version": "KqlItem/1.0",
-          "query": "\nSigninLogs\n    | where TimeGenerated > ago(180d)\n    | where CorrelationId == '{__CorrelationId}'\n    | project  TimeGenerated, UserPrincipalName, CorrelationId, ClientAppUsed, AppDisplayName, ResultDescription, ResultType, tostring( DeviceDetail), IPAddress\n    | order by TimeGenerated desc",
-          "size": 4,
-          "queryType": 0,
-          "resourceType": "microsoft.operationalinsights/workspaces"
-        },
-        "name": "query - 2"
-      },
-      {
-        "type": 1,
-        "content": {
-          "json": "### Results from Audit-In logs"
-        },
-        "name": "text - 6"
-      },
-      {
-        "type": 3,
-        "content": {
-          "version": "KqlItem/1.0",
-          "query": "AuditLogs\n   | where TimeGenerated > ago(180d) \n   | where CorrelationId  == '{__CorrelationId}'\n   | project CorrelationId,TimeGenerated, Result, tostring(TargetResources), tostring(AdditionalDetails), OperationName\n   | order by TimeGenerated desc \n\n//CorrelationId for Error : 413de74f-a7e5-46c5-9fad-fdfaad4fa631'\t",
-          "size": 1,
-          "queryType": 0,
-          "resourceType": "microsoft.operationalinsights/workspaces",
-          "visualization": "table",
-          "gridSettings": {
-            "formatters": [
-              {
-                "columnMatch": "Result",
-                "formatter": 18,
-                "formatOptions": {
-                  "thresholdsOptions": "icons",
-                  "thresholdsGrid": [
-                    {
-                      "operator": "==",
-                      "thresholdValue": "success",
-                      "representation": "success",
-                      "text": "{0}{1}"
-                    },
-                    {
-                      "operator": "!=",
-                      "thresholdValue": "sucsess",
-                      "representation": "error",
-                      "text": "{0}{1}"
-                    },
-                    {
-                      "operator": "Default",
-                      "thresholdValue": null,
-                      "representation": "more",
-                      "text": "{0}{1}"
-                    }
-                  ]
-                }
-              }
-            ]
-          },
-          "tileSettings": {
-            "titleContent": {
-              "columnMatch": "Result",
-              "formatter": 11
-            },
-            "showBorder": false
-          }
-        },
-        "name": "query - 4"
-      }
-    ],
-    "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
-  }
+      "name": "query - 4"
+    }
+  ],
+  "fallbackResourceIds": [
+    "/subscriptions/b0e2eadb-68a3-451b-b8e3-4681b9a8368f/resourceGroups/az-woodgrove-rg/providers/Microsoft.OperationalInsights/workspaces/azb2c-woodgrove-logs"
+  ],
+  "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
+}
