@@ -30,7 +30,20 @@ In this repo, you will find samples to create your own dashboard, reports & aler
 
 All the reports in this repo are based on [Azure Monitor Workbooks](https://docs.microsoft.com/en-us/azure/azure-monitor/platform/workbooks-overview) which provide a flexible canvas for data analysis and the creation of rich visual reports within the Azure portal. 
 
-### How to Configure Workbooks
+### Deploy workbooks via ARM template
+
+| Name      | Deploy |
+| ----------- | ----------- |
+| Dashboard      |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FdashboardWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>    |
+| Risk Detections      |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FriskDetectionsWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>    |
+| Conditional Access      |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FconditionalAccessWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>    |
+| MFA    |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FmfaWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>    |
+| Search by CorrelationId    |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FsearchByCorrelationIdWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>    |
+| Phone Authentication Failures   |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FphoneAuthFailuresWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>    |
+| List of Abandon Journeys  |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FabandonJourneysWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>    |
+
+
+### How to configure workbooks manually 
 
 The [Workbooks](workbooks) folder within this repo contains four workbooks in the standard JSON Gallery Template format. You can use the following instructions to import the JSON to create a new workbook. Please note that you need to repeat these steps for all workbooks. 
 
