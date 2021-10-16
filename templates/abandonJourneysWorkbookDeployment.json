@@ -1,0 +1,50 @@
+{
+    "$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "workbookDisplayName":  {             
+            "type":"string",
+            "defaultValue": "List of Abandon Journeys Report",
+            "metadata": {
+                "description": "The friendly name for the workbook that is used in the Gallery or Saved List. Needs to be unique in the scope of the resource group and source" 
+            }
+        },
+        "workSpace": {
+            "type": "string",
+            "defaultValue": "",
+            "metadata": {
+              "description": "The name of workspace where this workbook will be deployed"
+            }
+          },
+          "workbookId": {
+            "type": "string",
+            "defaultValue": "[newGuid()]",
+            "metadata": {
+              "description": "The unique guid for this workbook instance"
+            }
+          }
+    },    
+    "resources": [
+        {
+            "name": "[parameters('workbookId')]",
+            "type": "Microsoft.Insights/workbooks",
+            "location": "[resourceGroup().location]",
+            "kind": "shared",
+            "apiVersion": "2018-06-17-preview",
+            "dependsOn": [],
+            "properties": {
+                "displayName": "[parameters('workbookDisplayName')]",
+        "serializedData": "{\"version\":\"Notebook/1.0\",\"items\":[{\"type\":1,\"content\":{\"json\":\"## List of Abandon Journeys\\n---------------------------\\n### Select the CorrelationId to view details about the journey.\"},\"name\":\"text - 2\"},{\"type\":9,\"content\":{\"version\":\"KqlParameterItem/1.0\",\"parameters\":[{\"id\":\"55f2a818-f152-4dd1-9d59-c363aac9072e\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"TimeRange\",\"label\":\"Time Range\",\"type\":4,\"isRequired\":true,\"typeSettings\":{\"selectableValues\":[{\"durationMs\":300000},{\"durationMs\":900000},{\"durationMs\":1800000},{\"durationMs\":3600000},{\"durationMs\":14400000},{\"durationMs\":43200000},{\"durationMs\":86400000},{\"durationMs\":172800000},{\"durationMs\":259200000},{\"durationMs\":604800000},{\"durationMs\":1209600000},{\"durationMs\":2419200000},{\"durationMs\":2592000000},{\"durationMs\":5184000000},{\"durationMs\":7776000000}],\"allowCustom\":true},\"timeContext\":{\"durationMs\":86400000}},{\"id\":\"cf9c0808-2ca8-4c82-9254-74cc250c3267\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"AppInsightsId\",\"label\":\"Application Insights Identifier\",\"type\":1,\"description\":\"Identifies the app using one of the formats described in the document: https://docs.microsoft.com/en-us/azure/azure-monitor/logs/app-expression#arguments\",\"isRequired\":true,\"value\":\"\",\"timeContext\":{\"durationMs\":86400000}},{\"id\":\"6180349e-8221-4446-8af8-09dac9962c57\",\"version\":\"KqlParameterItem/1.0\",\"name\":\"Policy\",\"label\":\"Azure AD B2C Policy\",\"type\":1,\"description\":\"Azure AD B2C Policy (e.g. B2C_1A_SUSI)\",\"isRequired\":true,\"value\":\"\"}],\"style\":\"pills\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"parameters - 9\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"\\n///////////////////////\\n// Abandon Journeys\\n///////////////////////\\nlet policy_Id= '{Policy:value}'; \\nlet journeyEmpty = (journeyName:string) { iif(journeyName == \\\"\\\", \\\"Journey Not Finished\\\",journeyName) };\\nlet journeyCount =  (journeyName:string) { journeyName };\\nlet journey =  (journeyName:string) { app(\\\"{AppInsightsId:value}\\\").customEvents \\n                                        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\\n                                        | extend Policy_ = tostring(customDimensions.Policy)\\n                                        | where Policy_ == policy_Id\\n                                        | where name == journeyName\\n                                        | project CorrelationId_, Policy_, name, timestamp\\n                                        };\\njourney(\\\"JourneyStarted\\\") \\n| \\n    join kind=fullouter         (journey(\\\"JourneyCompleted\\\") \\n          | project _policy_Id=policy_Id, _name=name, CorrelationId_ )\\n    on $left.CorrelationId_ == $right.CorrelationId_\\n    | where _name == \\\"\\\"\\n    | project Started=name,Finished=journeyEmpty(_name), timestamp, policy_Id, CorrelationId=CorrelationId_\\n    | take 250 //Default limit for workbook\\n   \",\"size\":4,\"timeContextFromParameter\":\"TimeRange\",\"exportFieldName\":\"CorrelationId\",\"exportParameterName\":\"CorrelationId\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"gridSettings\":{\"formatters\":[{\"columnMatch\":\"Started\",\"formatter\":18,\"formatOptions\":{\"thresholdsOptions\":\"icons\",\"thresholdsGrid\":[{\"operator\":\"==\",\"thresholdValue\":\"JourneyStarted\",\"representation\":\"success\",\"text\":\"{0}{1}\"},{\"operator\":\"Default\",\"thresholdValue\":null,\"representation\":\"success\",\"text\":\"{0}{1}\"}]}},{\"columnMatch\":\"Finished\",\"formatter\":18,\"formatOptions\":{\"thresholdsOptions\":\"icons\",\"thresholdsGrid\":[{\"operator\":\"==\",\"thresholdValue\":\"Journey Not Finished\",\"representation\":\"2\",\"text\":\"{0}{1}\"},{\"operator\":\"Default\",\"thresholdValue\":null,\"representation\":\"success\",\"text\":\"{0}{1}\"}]}}]}},\"name\":\"query - 2\"},{\"type\":1,\"content\":{\"json\":\"### Journey Details\\n-------------------\"},\"name\":\"text - 7\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"app(\\\"{AppInsightsId:value}\\\").customEvents  \\n        | extend CorrelationId_ = tostring(parse_json(customDimensions).CorrelationId)\\n        | extend Policy_ = tostring(customDimensions.Policy)\\n        | where CorrelationId_ ==  '{CorrelationId}' \\n        | project CorrelationId_, Policy_, name, timestamp\\n        | order by timestamp desc\",\"size\":4,\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\",\"gridSettings\":{\"sortBy\":[{\"itemKey\":\"name\",\"sortOrder\":1}]},\"sortBy\":[{\"itemKey\":\"name\",\"sortOrder\":1}]},\"name\":\"query - 2\"},{\"type\":1,\"content\":{\"json\":\"### SignIn Logs\\n-------------------\"},\"name\":\"text - 5\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"\\nSigninLogs\\n    | where CorrelationId == '{CorrelationId}'\\n    | project  TimeGenerated, UserPrincipalName, CorrelationId, ClientAppUsed, AppDisplayName, ResultDescription, ResultType, tostring( DeviceDetail), IPAddress\\n    | order by TimeGenerated desc\\n\\n\",\"size\":1,\"timeContextFromParameter\":\"TimeRange\",\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"query - 3\"},{\"type\":1,\"content\":{\"json\":\"### Audit Logs\\n-------------------\"},\"name\":\"text - 6\"},{\"type\":3,\"content\":{\"version\":\"KqlItem/1.0\",\"query\":\"\\nAuditLogs\\n   | where CorrelationId  == '{CorrelationId}'\\n   | project CorrelationId,TimeGenerated, Result, tostring(TargetResources), tostring(AdditionalDetails), OperationName\\n   | order by TimeGenerated desc \\n\",\"size\":0,\"queryType\":0,\"resourceType\":\"microsoft.operationalinsights/workspaces\"},\"name\":\"query - 4\"}],\"isLocked\":false,\"fallbackResourceIds\":[\"/subscriptions/b0e2eadb-68a3-451b-b8e3-4681b9a8368f/resourceGroups/az-woodgrove-rg/providers/Microsoft.OperationalInsights/workspaces/azb2c-woodgrove-logs\"]}",
+              "version": "1.0",
+                "sourceId": "[concat(resourceGroup().id,'/','providers/Microsoft.OperationalInsights/workspaces','/',parameters('workSpace'))]",
+                "category": "workbook"
+            }
+        }
+    ],
+    "outputs": {
+        "workbookId": {
+            "type": "string",
+            "value": "[resourceId( 'Microsoft.Insights/workbooks', parameters('workbookId'))]"
+        }
+    }
+}
