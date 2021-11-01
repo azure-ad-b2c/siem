@@ -1,0 +1,76 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "LogAnalyticsWorkspaceId": {
+            "type": "string",
+            "minLength": 1,
+            "metadata": {
+                "description": "Log Analytics Workspace id"
+            }
+        },
+        "FrequencyInMinutes": {
+            "type": "int",
+            "defaultValue": 5,
+            "metadata": {
+                "description": "Frequency in minutes"
+            }
+        },
+        "WindowInMinutes": {
+            "type": "int",
+            "defaultValue": 1440,
+            "metadata": {
+                "description": "Window in minutes"
+            }
+        }
+    },
+    "variables": {
+        "alertLocation": "[resourceGroup().location]",
+        "alertName": "User account is sending excessive amount of risky sign-in requests",
+        "alertDescription": "User account is sending excessive amount of risky sign-in requests",
+        "alertStatus": "true",
+        "alertSource":{
+            "Query":"let alertThreshold = 0.5; //Alert will be triggered when this threashold will be crossed.\nlet duration = timespan(1d); //Duration (Azure Monitor only support alerts with duration looking pass data from 14 days)\nlet totalRequestsWithRisk = (duration: timespan) {\n    SigninLogs\n    | where TimeGenerated >= ago(1d) \n    | where RiskLevelDuringSignIn in (\"low\", \"medium\", \"high\")\n    | summarize total = count() \n};\nlet eval = (columnName: string) {\n    SigninLogs\n    | where TimeGenerated >= ago(1d)\n    | where RiskLevelDuringSignIn in (\"low\", \"medium\", \"high\")\n    | summarize requestsSend = count() by  column_ifexists(columnName, \"\")\n    | project column_ifexists(columnName, \"\"), requestsSend\n    | extend total= toscalar(totalRequestsWithRisk(duration))\n    | extend percentage = round((toreal(requestsSend) / toreal(total)) * 100, 2)\n    | where percentage >= alertThreshold\n    | project column_ifexists(columnName, \"\"), requests_send=requestsSend, total_requests=total, percentage_total = strcat(percentage, \"%\")\n        , query_eval_window_days_hours_mins= format_timespan(duration, \"d:h:m\") //days\n    | order by requests_send desc\n};\neval(\"UserPrincipalName\")\n",
+            "SourceId": "[concat(resourceGroup().id,'/','providers/Microsoft.OperationalInsights/workspaces','/',parameters('LogAnalyticsWorkspaceId'))]",
+            "Type":"ResultCount"
+        },
+        "alertSchedule":{
+            "Frequency": "[parameters('FrequencyInMinutes')]",
+            "Time": "[parameters('WindowInMinutes')]"
+        },
+        "alertActions":{
+            "SeverityLevel": "4"
+        },
+        "alertTrigger":{
+            "Operator":"GreaterThan",
+            "Threshold":"0"
+        }
+    },
+    "resources":[ {
+        "name":"[variables('alertName')]",
+        "type":"Microsoft.Insights/scheduledQueryRules",
+        "apiVersion": "2018-04-16",
+        "location": "[variables('alertLocation')]",
+        "properties":{
+            "description": "[variables('alertDescription')]",
+            "enabled": "[variables('alertStatus')]",
+            "source": {
+                "query": "[variables('alertSource').Query]",
+                "dataSourceId": "[variables('alertSource').SourceId]",
+                "queryType":"[variables('alertSource').Type]"
+            },
+            "schedule":{
+                "frequencyInMinutes": "[variables('alertSchedule').Frequency]",
+                "timeWindowInMinutes": "[variables('alertSchedule').Time]"
+            },
+            "action":{
+                "odata.type": "Microsoft.WindowsAzure.Management.Monitoring.Alerts.Models.Microsoft.AppInsights.Nexus.DataContracts.Resources.ScheduledQueryRules.AlertingAction",
+                "severity":"[variables('alertActions').SeverityLevel]",
+                "trigger":{
+                    "thresholdOperator":"[variables('alertTrigger').Operator]",
+                    "threshold":"[variables('alertTrigger').Threshold]"
+                }
+            }
+        }
+    } ]
+}
