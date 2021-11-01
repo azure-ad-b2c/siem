@@ -179,7 +179,7 @@ Alerts are created by alert rules in Azure Monitor and can automatically run sav
 
 | Name      | Deploy |
 | ----------- | ----------- |
-| User account is sending excessive amount of risky sign-in requests      |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Ftemplates%2FdashboardWorkbookDeployment.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>   
+| User account is sending excessive amount of risky sign-in requests      |<a href=https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fazure-ad-b2c%2Fsiem%2Fmaster%2Falerts%2FUserAcctSendingExcessiveReqs.json data-linktype="external"><img src=https://aka.ms/deploytoazurebutton alt="Deploy to Azure" data-linktype="external"></a>   
 
 #### Deploy alerts via Azure Portal
 
