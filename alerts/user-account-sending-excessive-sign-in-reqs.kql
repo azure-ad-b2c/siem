@@ -2,15 +2,15 @@ let alertThreshold = 0.5; //Alert will be triggered when this threashold will be
 let duration = timespan(1d); //Duration (Azure Monitor only support alerts with duration looking pass data from 14 days)
 let totalRequestsWithRisk = (duration: timespan) {
     SigninLogs
-    | where TimeGenerated >= ago(1d) 
+    | where TimeGenerated >= duration
     | where RiskLevelDuringSignIn in ("low", "medium", "high")
     | summarize total = count() 
 };
 let eval = (columnName: string) {
     SigninLogs
-    | where TimeGenerated >= ago(1d)
+    | where TimeGenerated >= duration
     | where RiskLevelDuringSignIn in ("low", "medium", "high")
-    | summarize requestsSend = count() by  column_ifexists(columnName, "")
+    | summarize requestsSend = count() by column_ifexists(columnName, "")
     | project column_ifexists(columnName, ""), requestsSend
     | extend total= toscalar(totalRequestsWithRisk(duration))
     | extend percentage = round((toreal(requestsSend) / toreal(total)) * 100, 2)
