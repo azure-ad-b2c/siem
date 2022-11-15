@@ -107,9 +107,6 @@
         "size": 1,
         "showAnalytics": true,
         "title": "Platform",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces"
@@ -134,9 +131,6 @@
         "size": 1,
         "showAnalytics": true,
         "title": "Browser",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -177,9 +171,6 @@
         "query": "SigninLogs\n| where AppDisplayName !=\"\"\n| where Location != \"\"\n| summarize signInCount = count() by Location\n| render columnchart  \n",
         "size": 0,
         "title": "Location",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -215,9 +206,6 @@
         "query": "SigninLogs\n| extend User = tolower(Identity)\n| project IPAddress, User\n| summarize Total = count() by IPAddress,User\n| order by Total desc\n",
         "size": 0,
         "title": "IP Address",
-        "timeContext": {
-          "durationMs": 0
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -266,9 +254,6 @@
         "size": 0,
         "showAnalytics": true,
         "title": "Authentications Per Application",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -328,13 +313,10 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "let GetIdPType = (IdPName:string) { iff(IdPName == \"LocalAccountUsername\",\"LocalAccount\",\"Federated\")};\nlet GetIdPValue = (IdPName:string,IdpName:string) { iff(IdPName == \"LocalAccountUsername\",\"Local\",IdpName)};\nAuditLogs\n    | where OperationName == \"Validate local account credentials\"\n      or OperationName == \"Federate with an identity provider\"\n    | project OperationName, Result, IdpType=GetIdPValue(extractjson(\"$.[4].key\",tostring(AdditionalDetails)),extractjson(\"$.[4].value\",tostring(AdditionalDetails)))\n    | where IdpType != \"N/A\"\n    | summarize Count =count() by IdentityProvider=IdpType\n    | order by Count   \n",
+        "query": "let GetIdPType = (IdPName:string) { iff(IdPName == \"LocalAccountUsername\",\"LocalAccount\",\"Federated\")};\nlet GetIdPValue = (IdPName:string,IdpName:string) { iff(IdPName == \"LocalAccountUsername\",\"Local\",IdpName)};\nAuditLogs\n    | where OperationName == \"Validate local account credentials\"\n      or OperationName == \"Federate with an identity provider\"\n    | project OperationName, Result, IdpType=GetIdPValue(extractjson(\"$.[4].key\",tostring(AdditionalDetails)),extractjson(\"$.[4].value\",tostring(AdditionalDetails)))\n    // Check for the case of federation: Azure AD B2C Audit logs does not provide federated identity provider name and it is always set to \"N/A\"\n    | extend IdpType =  iff(OperationName contains \"Federate with an identity provider\", iff(IdpType ==\"N/A\", \"Federated\",IdpType ) , IdpType)\n    | summarize Count =count() by IdentityProvider=IdpType\n    | order by Count   \n",
         "size": 0,
         "showAnalytics": true,
         "title": "Authentications Per Identity Provider",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -398,9 +380,6 @@
         "size": 3,
         "showAnalytics": true,
         "title": "Authentications Per Policy",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -499,9 +478,6 @@
         "size": 0,
         "showAnalytics": true,
         "title": "Authentications Failure Reasons",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces",
@@ -607,9 +583,6 @@
         "size": 0,
         "title": "Failed Sign-Ins (Timechart)",
         "color": "orange",
-        "timeContext": {
-          "durationMs": 7776000000
-        },
         "timeContextFromParameter": "TimeRange",
         "queryType": 0,
         "resourceType": "microsoft.operationalinsights/workspaces"
@@ -639,9 +612,6 @@
       },
       "name": "query - 10"
     }
-  ],
-  "fallbackResourceIds": [
-    "/subscriptions/b0e2eadb-68a3-451b-b8e3-4681b9a8368f/resourceGroups/az-woodgrove-rg/providers/Microsoft.OperationalInsights/workspaces/azb2c-woodgrove-logs"
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"
 }
