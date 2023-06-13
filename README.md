@@ -97,7 +97,7 @@ The workbook will display reports in the form of a dashboard.
 
 ### Multifactor Authentications (MFA) Operations 
 
-[MFA](workbook/mfa-operations) workbook provides summary of successful and failed MFA operations throughout Azure AD B2C Tenant.
+[MFA](workbooks/mfa-operations.json) workbook provides summary of successful and failed MFA operations throughout Azure AD B2C Tenant.
 
 - MFA Operations
     - Summary of MFA operations (success, failed, client error)
